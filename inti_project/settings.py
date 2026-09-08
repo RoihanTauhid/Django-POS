@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+from dotenv import load_dotenv
+load_dotenv()
 import os
 from pathlib import Path
 
@@ -140,6 +142,6 @@ MEDIA_ROOT = BASE_DIR /'media'
 # Sandbox : https://dashboard.sandbox.midtrans.com  -> Settings -> Access Keys
 # Produksi: https://dashboard.midtrans.com          -> Settings -> Access Keys
 # Kunci Sandbox Midtrans (aman untuk uji coba, tidak memakai uang asli)
-MIDTRANS_SERVER_KEY = os.environ.get('MIDTRANS_SERVER_KEY', 'HIDDEN_KEY')
-MIDTRANS_CLIENT_KEY = os.environ.get('MIDTRANS_CLIENT_KEY', 'Mid-client-B2REX9oAwYn9E-x_')
+MIDTRANS_SERVER_KEY = os.environ.get('MIDTRANS_SERVER_KEY', '')
+MIDTRANS_CLIENT_KEY = os.environ.get('MIDTRANS_CLIENT_KEY', '')
 MIDTRANS_IS_PRODUCTION = os.environ.get('MIDTRANS_IS_PRODUCTION', 'False').lower() == 'true'
