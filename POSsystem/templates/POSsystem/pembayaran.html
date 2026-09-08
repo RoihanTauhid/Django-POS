@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pembayaran - {{ transaksi.kode_transaksi }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="{{ midtrans_snap_url }}"
+      data-client-key="{{ midtrans_client_key }}"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="flex min-h-screen items-center justify-center bg-[#f1f2eb] p-4 font-sans text-[#20231f]"
+  >
+    <div class="w-full max-w-md">
+      <!-- Kartu ringkasan pesanan -->
+      <div class="rounded-2xl bg-[#20231f] p-6 text-white shadow-xl">
+        <p class="mono text-[10px] uppercase tracking-[.2em] text-[#aab7a0]">
+          Pembayaran online via Midtrans
+        </p>
+        <h1 class="mt-1 text-xl font-extrabold">
+          {{ transaksi.kode_transaksi }}
+        </h1>
+        <p class="mt-1 text-xs text-[#aab0a6]">
+          Metode: {{ transaksi.get_metode_pembayaran_display }}
+        </p>
+
+        <div class="mt-5 space-y-2 border-t border-white/10 pt-4">
+          {% for item in detail_transaksi %}
+          <div class="flex justify-between text-xs">
+            <span>{{ item.produk.nama_produk }} &times; {{ item.jumlah }}</span>
+            <span class="font-bold">Rp {{ item.subtotal }}</span>
+          </div>
+          {% endfor %} {% if transaksi.diskon > 0 %}
+          <div class="flex justify-between text-xs text-[#e7b98a]">
+            <span>Diskon</span>
+            <span>- Rp {{ transaksi.diskon }}</span>
+          </div>
+          {% endif %}
+        </div>
+
+        <div
+          class="mt-5 flex items-end justify-between border-t border-white/10 pt-4"
+        >
+          <span class="text-sm font-semibold">Total tagihan</span>
+          <span class="text-2xl font-extrabold text-[#dce6d5]"
+            >Rp {{ transaksi.total_harga }}</span
+          >
+        </div>
+
+        <button
+          type="button"
+          id="btn-bayar"
+          class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#dce6d5] py-3.5 text-xs font-extrabold text-[#3e5036] transition hover:bg-white"
+        >
+          Bayar sekarang
+          <i>&#8599;</i>
+        </button>
+
+        <form
+          action="{% url 'batalkan_pembayaran' transaksi.id %}"
+          method="POST"
+          class="mt-3"
+        >
+          {% csrf_token %}
+          <button
+            type="submit"
+            id="btn-batal"
+            class="w-full rounded-xl border border-white/15 py-3 text-[11px] font-bold text-[#aab0a6] transition hover:border-white/40 hover:text-white"
+          >
+            Batalkan pembayaran
+          </button>
+        </form>
+      </div>
+
+      <!-- Status pembayaran -->
+      <div
+        id="status-box"
+        class="mt-4 hidden items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
+      >
+        <span
+          id="status-spinner"
+          class="h-4 w-4 animate-spin rounded-full border-2 border-[#879b75] border-t-transparent"
+        ></span>
+        <p id="status-text" class="text-xs font-bold">
+          Menunggu konfirmasi pembayaran...
+        </p>
+      </div>
+
+      <p class="mt-4 text-center text-[11px] leading-5 text-[#9a9f96]">
+        Halaman ini akan otomatis berpindah ke struk setelah<br />pembayaran
+        berhasil dikonfirmasi.
+      </p>
+    </div>
+
+    <script>
+      const snapToken = "{{ transaksi.snap_token }}";
+      const statusUrl = "{% url 'status_pembayaran' transaksi.id %}";
+      const strukUrl = "{% url 'cetak_struk' transaksi.id %}";
+      const kasirUrl = "{% url 'halaman_kasir' %}";
+
+      const statusBox = document.getElementById("status-box");
+      const statusText = document.getElementById("status-text");
+      const btnBayar = document.getElementById("btn-bayar");
+      const btnBatal = document.getElementById("btn-batal");
+
+      let pollTimer = null;
+      let selesai = false;
+
+      function tampilkanStatus(teks) {
+        statusBox.classList.remove("hidden");
+        statusBox.classList.add("flex");
+        statusText.textContent = teks;
+      }
+
+      function keStruk() {
+        if (selesai) return;
+        selesai = true;
+        clearInterval(pollTimer);
+        window.location.href = strukUrl;
+      }
+
+      function mulaiPolling() {
+        if (pollTimer) return;
+        tampilkanStatus("Menunggu konfirmasi pembayaran...");
+        pollTimer = setInterval(async () => {
+          try {
+            const res = await fetch(statusUrl, { cache: "no-store" });
+            const data = await res.json();
+            if (data.status === "SELESAI") {
+              tampilkanStatus("Pembayaran berhasil! Mengalihkan ke struk...");
+              setTimeout(keStruk, 800);
+            } else if (data.status === "VOID") {
+              clearInterval(pollTimer);
+              tampilkanStatus("Pembayaran dibatalkan / kedaluwarsa.");
+              setTimeout(() => (window.location.href = kasirUrl), 1500);
+            }
+          } catch (e) {
+            console.warn("Gagal memeriksa status:", e);
+          }
+        }, 3000);
+      }
+
+      function bayarSekarang() {
+        if (typeof snap === "undefined") {
+          tampilkanStatus(
+            "Gagal memuat modul pembayaran Midtrans. Periksa koneksi internet / matikan pemblokir iklan lalu muat ulang halaman.",
+          );
+          return;
+        }
+        snap.pay(snapToken, {
+          onSuccess: () => {
+            tampilkanStatus("Pembayaran berhasil! Mengalihkan ke struk...");
+            // Tunggu webhook memperbarui status, polling akan mengarahkan ke struk.
+            mulaiPolling();
+          },
+          onPending: () => {
+            tampilkanStatus(
+              "Pembayaran tertunda. Selesaikan sesuai instruksi yang ditampilkan.",
+            );
+            mulaiPolling();
+          },
+          onError: () => {
+            tampilkanStatus("Terjadi kesalahan saat pembayaran. Coba lagi.");
+          },
+          onClose: () => {
+            if (!selesai) {
+              tampilkanStatus(
+                "Popup ditutup sebelum pembayaran selesai. Klik 'Bayar sekarang' untuk mencoba lagi.",
+              );
+              mulaiPolling();
+            }
+          },
+        });
+      }
+
+      btnBayar.addEventListener("click", bayarSekarang);
+      btnBatal.addEventListener("click", () => {
+        clearInterval(pollTimer);
+      });
+
+      // Buka popup Snap otomatis saat halaman dimuat
+      window.addEventListener("load", () => {
+        setTimeout(bayarSekarang, 500);
+      });
+    </script>
+  </body>
+</html>

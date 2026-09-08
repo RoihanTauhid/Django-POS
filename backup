@@ -1,0 +1,1181 @@
+[
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-08-19T13:54:12.712Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "Makanan Ringan",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-08-19T13:55:06.206Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "12121212 - Lays",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-08-20T03:21:46.497Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "12121212 - Lays",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Gambar\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-08-20T03:22:16.945Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "131313 - Chitato",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-08-20T03:57:33.656Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "131313 - Chitato",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Gambar\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-08-20T03:57:42.431Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "12121212 - Lays",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Gambar\"]}}]"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 1,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 1,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 1,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 1,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 3,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 3,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 3,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 3,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 2,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 2,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 2,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 2,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 4,
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 4,
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 4,
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view user",
+    "content_type": 4,
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 5,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 5,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 5,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 5,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 6,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 6,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 6,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 6,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add kategori",
+    "content_type": 7,
+    "codename": "add_kategori"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change kategori",
+    "content_type": 7,
+    "codename": "change_kategori"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete kategori",
+    "content_type": 7,
+    "codename": "delete_kategori"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view kategori",
+    "content_type": 7,
+    "codename": "view_kategori"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add produk",
+    "content_type": 8,
+    "codename": "add_produk"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change produk",
+    "content_type": 8,
+    "codename": "change_produk"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete produk",
+    "content_type": 8,
+    "codename": "delete_produk"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view produk",
+    "content_type": 8,
+    "codename": "view_produk"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add detail transaksi",
+    "content_type": 9,
+    "codename": "add_detailtransaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change detail transaksi",
+    "content_type": 9,
+    "codename": "change_detailtransaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete detail transaksi",
+    "content_type": 9,
+    "codename": "delete_detailtransaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view detail transaksi",
+    "content_type": 9,
+    "codename": "view_detailtransaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add transaksi",
+    "content_type": 10,
+    "codename": "add_transaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change transaksi",
+    "content_type": 10,
+    "codename": "change_transaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete transaksi",
+    "content_type": 10,
+    "codename": "delete_transaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view transaksi",
+    "content_type": 10,
+    "codename": "view_transaksi"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add riwayat stok",
+    "content_type": 11,
+    "codename": "add_riwayatstok"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change riwayat stok",
+    "content_type": 11,
+    "codename": "change_riwayatstok"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete riwayat stok",
+    "content_type": 11,
+    "codename": "delete_riwayatstok"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view riwayat stok",
+    "content_type": 11,
+    "codename": "view_riwayatstok"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add pembelian",
+    "content_type": 12,
+    "codename": "add_pembelian"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change pembelian",
+    "content_type": 12,
+    "codename": "change_pembelian"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete pembelian",
+    "content_type": 12,
+    "codename": "delete_pembelian"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view pembelian",
+    "content_type": 12,
+    "codename": "view_pembelian"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add supplier",
+    "content_type": 13,
+    "codename": "add_supplier"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change supplier",
+    "content_type": 13,
+    "codename": "change_supplier"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete supplier",
+    "content_type": 13,
+    "codename": "delete_supplier"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view supplier",
+    "content_type": 13,
+    "codename": "view_supplier"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add audit log",
+    "content_type": 14,
+    "codename": "add_auditlog"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change audit log",
+    "content_type": 14,
+    "codename": "change_auditlog"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete audit log",
+    "content_type": 14,
+    "codename": "delete_auditlog"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view audit log",
+    "content_type": 14,
+    "codename": "view_auditlog"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$UbUNV7NNlCbZ348qFSL5FG$ZplVTh+OtES4Z7gp1ffOA/V6MG1Ypefw/LqxVbqPBeI=",
+    "last_login": "2026-08-19T13:48:42.511Z",
+    "is_superuser": true,
+    "username": "roi",
+    "first_name": "",
+    "last_name": "",
+    "email": "roihanntauhidd@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-08-19T13:46:41.914Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$0MRY8QNRo3Tb20ihu2RD0k$pseH+aELXruP76KIJ1w/SHm+qQH5SUL0tWJ2HZOgww8=",
+    "last_login": "2026-08-23T11:34:48.809Z",
+    "is_superuser": false,
+    "username": "smoke",
+    "first_name": "",
+    "last_name": "",
+    "email": "x@example.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-23T11:34:39.165Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "auth",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "kategori"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "produk"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "detailtransaksi"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "transaksi"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "riwayatstok"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "pembelian"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "supplier"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 14,
+  "fields": {
+    "app_label": "POSsystem",
+    "model": "auditlog"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "fsn3t0d02xh44tqz54nm1ucnxq95y1qm",
+  "fields": {
+    "session_data": "eyJrZXJhbmphbmciOnt9fQ:1wy6Kg:KHoeUfAIOJDs_pwiy-O4FAkUdbTBtyPmM4Cr6jMlF5s",
+    "expire_date": "2026-09-06T11:25:46.940Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "g7p7fworkh6gis2nkc2q0qmo8b7cuq31",
+  "fields": {
+    "session_data": ".eJxVjDEKwzAMAP-iuZg4VuySsXvfYCTLqtMWB-JkCv17CWRo17vjdoi0rSVuLS9xEhjBwuWXMaVXroeQJ9XHbNJc12VicyTmtM3cZ8nv29n-DQq1AiN0qbdBJbFVnwStDpxcRk_CiE6cYsfkPTmHyMoSeiHNA1-DqniX4fMFEg05cA:1wy5UX:GacUQ0hrY8OVkkhxnQhDyPz3Ws5H1VVD2yIB4m2sktk",
+    "expire_date": "2026-09-06T10:31:53.811Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qy26e2782ampf31m4dnz9nxbb7htdz4m",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQAP9lz4YAXdqlR-9-A-GxSNVAUtqT8d9Nkx70OjOZNzi_b8XtnVe3JJhBw-WXBR-fXA-RHr7em4itbusSxJGI03Zxa4lf17P9GxTfC8wQs6QYVPDMUo9I1kRreKSMWiq2xEkGRq1sxDRYw8RSmSkjTqQGgxk-X-2KN4Y:1wy6TQ:dUe_6kYTRDVTag6B-gmENTMsVLwRU6OtzKjBg-Unb0w",
+    "expire_date": "2026-09-06T11:34:48.943Z"
+  }
+},
+{
+  "model": "POSsystem.kategori",
+  "pk": 1,
+  "fields": {
+    "nama": "Makanan Ringan"
+  }
+},
+{
+  "model": "POSsystem.kategori",
+  "pk": 2,
+  "fields": {
+    "nama": "Minuman"
+  }
+},
+{
+  "model": "POSsystem.produk",
+  "pk": 1,
+  "fields": {
+    "kategori": 1,
+    "kode_barcode": "12121212",
+    "nama_produk": "Lays",
+    "harga_beli": "9000.00",
+    "harga_jual": "13000.00",
+    "stok_gudang": 171,
+    "stok_minimum": 5,
+    "gambar": "produk_images/lays.jfif"
+  }
+},
+{
+  "model": "POSsystem.produk",
+  "pk": 2,
+  "fields": {
+    "kategori": 1,
+    "kode_barcode": "131313",
+    "nama_produk": "Chitato",
+    "harga_beli": "9000.00",
+    "harga_jual": "14000.00",
+    "stok_gudang": 175,
+    "stok_minimum": 5,
+    "gambar": "produk_images/citatp.webp"
+  }
+},
+{
+  "model": "POSsystem.produk",
+  "pk": 3,
+  "fields": {
+    "kategori": 1,
+    "kode_barcode": "4589340580",
+    "nama_produk": "Sanjay",
+    "harga_beli": "8000.00",
+    "harga_jual": "15000.00",
+    "stok_gudang": 277,
+    "stok_minimum": 5,
+    "gambar": "produk_images/sanjay.jpg"
+  }
+},
+{
+  "model": "POSsystem.produk",
+  "pk": 4,
+  "fields": {
+    "kategori": 2,
+    "kode_barcode": "1231234",
+    "nama_produk": "Nescafe",
+    "harga_beli": "7000.00",
+    "harga_jual": "10000.00",
+    "stok_gudang": 101,
+    "stok_minimum": 5,
+    "gambar": "produk_images/nescaffe.png"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 1,
+  "fields": {
+    "kode_transaksi": "TRX-97E39150",
+    "tanggal": "2026-08-20T06:19:43.415Z",
+    "total_harga": "39000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 2,
+  "fields": {
+    "kode_transaksi": "TRX-01EF9DCA",
+    "tanggal": "2026-08-20T06:46:10.287Z",
+    "total_harga": "27000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 3,
+  "fields": {
+    "kode_transaksi": "TRX-DC6DBED2",
+    "tanggal": "2026-08-20T08:17:01.771Z",
+    "total_harga": "26000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 4,
+  "fields": {
+    "kode_transaksi": "TRX-DFA4C178",
+    "tanggal": "2026-08-20T08:17:23.207Z",
+    "total_harga": "26000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 5,
+  "fields": {
+    "kode_transaksi": "TRX-83B866B4",
+    "tanggal": "2026-08-20T08:32:24.293Z",
+    "total_harga": "28000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 6,
+  "fields": {
+    "kode_transaksi": "TRX-07486BB3",
+    "tanggal": "2026-08-23T08:39:09.622Z",
+    "total_harga": "29000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 7,
+  "fields": {
+    "kode_transaksi": "TRX-5B430E1D",
+    "tanggal": "2026-08-23T08:40:38.626Z",
+    "total_harga": "28000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 8,
+  "fields": {
+    "kode_transaksi": "TRX-E7C9BA8D",
+    "tanggal": "2026-08-23T09:40:21.713Z",
+    "total_harga": "27000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 9,
+  "fields": {
+    "kode_transaksi": "TRX-E07315D3",
+    "tanggal": "2026-08-23T09:43:43.071Z",
+    "total_harga": "42000.00",
+    "uang_dibayar": "0.00",
+    "kembalian": "0.00"
+  }
+},
+{
+  "model": "POSsystem.transaksi",
+  "pk": 10,
+  "fields": {
+    "kode_transaksi": "TRX-8F3941B3",
+    "tanggal": "2026-08-23T10:31:53.787Z",
+    "total_harga": "27000.00",
+    "uang_dibayar": "30000.00",
+    "kembalian": "3000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 1,
+  "fields": {
+    "transaksi": 1,
+    "produk": 1,
+    "jumlah": 3,
+    "subtotal": "39000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 2,
+  "fields": {
+    "transaksi": 2,
+    "produk": 1,
+    "jumlah": 1,
+    "subtotal": "13000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 3,
+  "fields": {
+    "transaksi": 2,
+    "produk": 2,
+    "jumlah": 1,
+    "subtotal": "14000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 4,
+  "fields": {
+    "transaksi": 3,
+    "produk": 1,
+    "jumlah": 2,
+    "subtotal": "26000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 5,
+  "fields": {
+    "transaksi": 4,
+    "produk": 1,
+    "jumlah": 2,
+    "subtotal": "26000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 6,
+  "fields": {
+    "transaksi": 5,
+    "produk": 1,
+    "jumlah": 1,
+    "subtotal": "13000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 7,
+  "fields": {
+    "transaksi": 5,
+    "produk": 3,
+    "jumlah": 1,
+    "subtotal": "15000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 8,
+  "fields": {
+    "transaksi": 6,
+    "produk": 2,
+    "jumlah": 1,
+    "subtotal": "14000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 9,
+  "fields": {
+    "transaksi": 6,
+    "produk": 3,
+    "jumlah": 1,
+    "subtotal": "15000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 10,
+  "fields": {
+    "transaksi": 7,
+    "produk": 2,
+    "jumlah": 2,
+    "subtotal": "28000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 11,
+  "fields": {
+    "transaksi": 8,
+    "produk": 2,
+    "jumlah": 1,
+    "subtotal": "14000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 12,
+  "fields": {
+    "transaksi": 8,
+    "produk": 1,
+    "jumlah": 1,
+    "subtotal": "13000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 13,
+  "fields": {
+    "transaksi": 9,
+    "produk": 1,
+    "jumlah": 1,
+    "subtotal": "13000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 14,
+  "fields": {
+    "transaksi": 9,
+    "produk": 3,
+    "jumlah": 1,
+    "subtotal": "15000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 15,
+  "fields": {
+    "transaksi": 9,
+    "produk": 2,
+    "jumlah": 1,
+    "subtotal": "14000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 16,
+  "fields": {
+    "transaksi": 10,
+    "produk": 2,
+    "jumlah": 1,
+    "subtotal": "14000.00"
+  }
+},
+{
+  "model": "POSsystem.detailtransaksi",
+  "pk": 17,
+  "fields": {
+    "transaksi": 10,
+    "produk": 1,
+    "jumlah": 1,
+    "subtotal": "13000.00"
+  }
+},
+{
+  "model": "POSsystem.riwayatstok",
+  "pk": 1,
+  "fields": {
+    "produk": 1,
+    "tipe": "MASUK",
+    "jumlah": 59,
+    "tanggal": "2026-08-20T07:02:54.388Z",
+    "keterangan": "Tambahan dari toko cabang"
+  }
+},
+{
+  "model": "POSsystem.riwayatstok",
+  "pk": 2,
+  "fields": {
+    "produk": 2,
+    "tipe": "MASUK",
+    "jumlah": 50,
+    "tanggal": "2026-08-23T08:40:26.216Z",
+    "keterangan": "Tambahan dari supplier"
+  }
+},
+{
+  "model": "POSsystem.riwayatstok",
+  "pk": 3,
+  "fields": {
+    "produk": 3,
+    "tipe": "KELUAR",
+    "jumlah": 60,
+    "tanggal": "2026-08-23T11:08:06.726Z",
+    "keterangan": "Kadarluarsa"
+  }
+},
+{
+  "model": "POSsystem.riwayatstok",
+  "pk": 4,
+  "fields": {
+    "produk": 4,
+    "tipe": "MASUK",
+    "jumlah": 23,
+    "tanggal": "2026-08-23T11:39:29.389Z",
+    "keterangan": "Pembelian supplier"
+  }
+},
+{
+  "model": "POSsystem.supplier",
+  "pk": 1,
+  "fields": {
+    "nama": "Radi",
+    "telepon": "088888888888",
+    "alamat": "JL. Desa Makmur Pangkalan kerinci"
+  }
+},
+{
+  "model": "POSsystem.pembelian",
+  "pk": 1,
+  "fields": {
+    "supplier": 1,
+    "produk": 4,
+    "jumlah": 23,
+    "harga_satuan": "6000.00",
+    "total": "138000.00",
+    "tanggal": "2026-08-23T11:39:29.386Z"
+  }
+},
+{
+  "model": "POSsystem.auditlog",
+  "pk": 1,
+  "fields": {
+    "pengguna": 1,
+    "aksi": "PEMBELIAN",
+    "keterangan": "Nescafe: 23 unit",
+    "waktu": "2026-08-23T11:39:29.390Z"
+  }
+}
+]

@@ -1,0 +1,34 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.halaman_kasir, name='halaman_kasir'),
+    path('tambah/<int:produk_id>/', views.tambah_ke_keranjang, name='tambah_ke_keranjang'),
+    path('keranjang/<int:produk_id>/<str:aksi>/', views.ubah_keranjang, name='ubah_keranjang'),
+    path('bersihkan/', views.bersihkan_keranjang, name='bersihkan_keranjang'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('struk/<int:transaksi_id>/', views.cetak_struk, name='cetak_struk'),
+    # Payment gateway (Midtrans)
+    path('payment/midtrans/notifikasi/', views.midtrans_notification, name='midtrans_notification'),
+    path('payment/<int:transaksi_id>/', views.halaman_pembayaran, name='halaman_pembayaran'),
+    path('payment/<int:transaksi_id>/status/', views.status_pembayaran, name='status_pembayaran'),
+    path('payment/<int:transaksi_id>/batal/', views.batalkan_pembayaran, name='batalkan_pembayaran'),
+    path('gudang/', views.halaman_gudang, name='halaman_gudang'),
+    path('stok/', views.halaman_stok, name='halaman_stok'),
+    path('produk/tambah/', views.tambah_produk_baru, name='tambah_produk_baru'),
+    path('produk/<int:produk_id>/edit/', views.edit_produk, name='edit_produk'),
+    path('produk/<int:produk_id>/hapus/', views.hapus_produk, name='hapus_produk'),
+    path('kategori/tambah/', views.tambah_kategori, name='tambah_kategori'),
+    path('pembelian/', views.halaman_pembelian, name='halaman_pembelian'),
+    path('supplier/tambah/', views.tambah_supplier, name='tambah_supplier'),
+    path('analytics/', views.halaman_analytics, name='halaman_analytics'),
+    path('analytics/riwayat/', views.halaman_riwayat_transaksi, name='halaman_riwayat_transaksi'),
+    path('analytics/export/', views.export_transaksi, name='export_transaksi'),
+    path('transaksi/<int:transaksi_id>/void/', views.void_transaksi, name='void_transaksi'),
+    path('retur/<int:detail_id>/', views.retur_transaksi, name='retur_transaksi'),
+    path('opname/', views.halaman_opname, name='halaman_opname'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('backup/', views.backup_database, name='backup_database'),
+    path('audit/', views.halaman_audit, name='halaman_audit'),
+]

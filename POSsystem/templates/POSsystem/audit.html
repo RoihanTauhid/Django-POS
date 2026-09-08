@@ -1,0 +1,47 @@
+{% extends 'POSsystem/base.html' %}
+<!-- title -->
+{% block title %}Audit Aktivitas | Ecomora{% endblock %}
+<!-- active nav -->
+{% block analytics_active %}active{% endblock %} {% block content %}
+<section class="fade-up">
+  <div class="mb-8">
+    <p
+      class="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-[#879b75]"
+    >
+      Security trail
+    </p>
+    <h1 class="text-3xl font-extrabold">Audit aktivitas.</h1>
+    <p class="mt-2 text-sm text-[#747a71]">
+      Jejak perubahan penting di dalam sistem.
+    </p>
+  </div>
+  <div class="overflow-x-auto rounded-2xl border border-[#e5e5dc] bg-white">
+    <table class="w-full min-w-[600px] text-left text-xs">
+      <thead>
+        <tr class="border-b bg-[#f5f6f1] text-[10px] uppercase text-[#8b9286]">
+          <th class="p-4">Waktu</th>
+          <th class="p-4">Pengguna</th>
+          <th class="p-4">Aksi</th>
+          <th class="p-4">Keterangan</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in log_aktivitas %}
+        <tr class="border-b border-[#f0f0eb]">
+          <td class="p-4 text-[#8b9286]">{{ log.waktu|date:"d/m/Y H:i" }}</td>
+          <td class="p-4">{{ log.pengguna|default:"Sistem" }}</td>
+          <td class="p-4 font-bold">{{ log.aksi }}</td>
+          <td class="p-4">{{ log.keterangan }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="p-14 text-center text-[#9a9f96]">
+            Belum ada aktivitas.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,343 @@
+{% extends 'POSsystem/base.html' %}
+<!-- title block -->
+{% block title %}Kasir | Ecomora{% endblock %}
+<!-- active nav -->
+{% block kasir_active %}active{% endblock %}
+<!-- eyebrow -->
+{% block eyebrow %}<span
+  class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]"
+  >Point of sale / 01</span
+>{% endblock %} {% block content %} {% block extra_head %}
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+{% endblock %}
+<section class="fade-up">
+  <div
+    class="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end"
+  >
+    <div>
+      <p
+        class="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-[#879b75]"
+      >
+        {% now "l, d F Y" %}
+      </p>
+      <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">
+        Selamat datang, Admin.
+      </h1>
+      <p class="mt-2 text-sm text-[#747a71]">
+        Siap melayani transaksi berikutnya?
+      </p>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 gap-8 xl:grid-cols-[1fr_360px]">
+    <div class="min-w-0">
+      <form action="" method="GET" class="relative mb-5">
+        <i
+          data-lucide="scan-line"
+          class="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#879b75]"
+        ></i
+        ><input
+          type="text"
+          name="barcode"
+          autofocus
+          placeholder="Scan barcode atau cari nama produk..."
+          class="field w-full rounded-2xl py-4 pl-11 pr-4 text-sm"
+        />
+      </form>
+      <button
+        type="button"
+        id="open-cashier-scanner"
+        class="btn-soft mb-6 inline-flex items-center gap-2 rounded-xl px-4 py-3 text-xs font-extrabold"
+      >
+        <i data-lucide="camera" class="h-4 w-4"></i>Scan dengan kamera
+      </button>
+      <div
+        class="mb-7 flex items-center gap-2 overflow-x-auto pb-1 text-xs font-semibold"
+      >
+        <a
+          href="{% url 'halaman_kasir' %}"
+          class="whitespace-nowrap rounded-full px-4 py-2 {% if not kategori_aktif or kategori_aktif == 'None' %}bg-[#20231f] text-white{% else %}text-[#747a71] hover:bg-[#eeefe8]{% endif %}"
+          >Semua produk</a
+        >{% for kat in semua_kategori %}<a
+          href="?kategori={{ kat.id }}"
+          class="whitespace-nowrap rounded-full px-4 py-2 {% if kategori_aktif == kat.id|stringformat:'s' %}bg-[#20231f] text-white{% else %}text-[#747a71] hover:bg-[#eeefe8]{% endif %}"
+          >{{ kat.nama }}</a
+        >{% endfor %}
+      </div>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-lg font-extrabold">Katalog produk</h2>
+        <span class="text-xs text-[#9a9f96]"
+          >{{ daftar_produk|length }} item tersedia</span
+        >
+      </div>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+        {% for produk in daftar_produk %}<a
+          href="{% url 'tambah_ke_keranjang' produk.id %}"
+          class="product-card group rounded-2xl p-2.5"
+          ><div
+            class="mb-3 aspect-square overflow-hidden rounded-xl bg-[#eef0e9]"
+          >
+            {% if produk.gambar %}<img
+              src="{{ produk.gambar.url }}"
+              alt="{{ produk.nama_produk }}"
+              class="h-full w-full object-contain p-2"
+            />{% else %}
+            <div class="flex h-full items-center justify-center text-[#a9afa4]">
+              <i data-lucide="image" class="h-7 w-7"></i>
+            </div>
+            {% endif %}
+          </div>
+          <h3 class="truncate px-1 text-xs font-bold">
+            {{ produk.nama_produk }}
+          </h3>
+          <p class="mt-1 px-1 text-sm font-extrabold">
+            Rp {{ produk.harga_jual }}
+          </p>
+          <div
+            class="mt-3 flex justify-between border-t border-[#eee] px-1 pt-2 text-[10px] text-[#8b9286]"
+          >
+            <span>Stok {{ produk.stok_gudang }}</span
+            ><span class="font-bold text-[#879b75]">Tambah +</span>
+          </div></a
+        >{% empty %}
+        <div
+          class="col-span-full rounded-2xl border border-dashed border-[#d8ddd2] py-16 text-center text-sm text-[#9a9f96]"
+        >
+          Produk tidak ditemukan.
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <aside
+      class="flex h-fit flex-col rounded-2xl bg-[#20231f] p-5 text-white xl:sticky xl:top-8"
+    >
+      <div
+        class="mb-6 flex items-center justify-between border-b border-white/10 pb-5"
+      >
+        <div>
+          <p class="mono text-[10px] uppercase tracking-[.15em] text-[#aab7a0]">
+            Current order
+          </p>
+          <h2 class="mt-1 text-lg font-extrabold">Keranjang belanja</h2>
+        </div>
+        <span
+          class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-xs font-bold"
+          >{{ total_item }}</span
+        >
+      </div>
+      <div class="min-h-[250px] space-y-3">
+        {% for key, item in keranjang.items %}
+        <div
+          class="flex items-start justify-between gap-3 border-b border-white/10 pb-3"
+        >
+          <div>
+            <h3 class="text-xs font-bold">{{ item.nama }}</h3>
+            <p class="mt-1 text-[11px] text-[#aab0a6]">
+              {{ item.jumlah }} x Rp {{ item.harga }}
+            </p>
+            <div class="mt-2 flex items-center gap-1">
+              <a
+                href="{% url 'ubah_keranjang' item.id 'kurang' %}"
+                class="flex h-5 w-5 items-center justify-center rounded-md bg-white/10 text-xs"
+                >-</a
+              ><span class="w-5 text-center text-[10px]">{{ item.jumlah }}</span
+              ><a
+                href="{% url 'ubah_keranjang' item.id 'tambah' %}"
+                class="flex h-5 w-5 items-center justify-center rounded-md bg-white/10 text-xs"
+                >+</a
+              ><a
+                href="{% url 'ubah_keranjang' item.id 'hapus' %}"
+                class="ml-2 text-[10px] text-[#e7b98a]"
+                >Hapus</a
+              >
+            </div>
+          </div>
+          <span class="text-xs font-bold">Rp {{ item.subtotal }}</span>
+        </div>
+        {% empty %}
+        <div
+          class="flex min-h-[220px] flex-col items-center justify-center text-center text-[#aab0a6]"
+        >
+          <i data-lucide="shopping-bag" class="mb-3 h-7 w-7"></i>
+          <p class="text-xs leading-5">
+            Keranjang masih kosong.<br />Pilih produk untuk memulai.
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="mt-5 border-t border-white/10 pt-5">
+        <div class="mb-2 flex justify-between text-xs text-[#aab0a6]">
+          <span>Total item</span><span>{{ total_item }}</span>
+        </div>
+        <div class="mb-5 flex items-end justify-between">
+          <span class="text-sm font-semibold">Total bayar</span
+          ><span class="text-xl font-extrabold text-[#dce6d5]"
+            >Rp {{ total_belanja }}</span
+          >
+        </div>
+        <form action="{% url 'checkout' %}" method="POST">
+          {% csrf_token %}<label
+            id="kolom-tunai"
+            class="mb-2 block text-xs font-semibold text-[#aab0a6]"
+            >Uang diberikan<input
+              id="uang-dibayar"
+              type="number"
+              name="uang_dibayar"
+              min="{{ total_belanja }}"
+              step="0.01"
+              required
+              placeholder="Rp 0"
+              class="field mt-2 w-full rounded-xl border-white/10 bg-white/10 p-3 text-sm text-white"
+          /></label>
+          <div
+            id="baris-kembalian"
+            class="mb-4 flex justify-between text-xs text-[#aab0a6]"
+          >
+            <span>Sisa kembalian</span
+            ><strong id="nilai-kembalian" class="text-[#dce6d5]">Rp 0</strong>
+          </div>
+          <div class="mb-3 grid grid-cols-2 gap-2">
+            <label class="text-xs font-semibold text-[#aab0a6]"
+              >Diskon<input
+                id="diskon"
+                type="number"
+                name="diskon"
+                min="0"
+                max="{{ total_belanja }}"
+                value="0"
+                class="field mt-2 w-full rounded-xl border-white/10 bg-white/10 p-3 text-sm text-white" /></label
+            ><label class="text-xs font-semibold text-[#aab0a6]"
+              >Pembayaran<select
+                name="metode_pembayaran"
+                class="field mt-2 w-full rounded-xl border-white/10 bg-[#343a32] p-3 text-sm text-white"
+              >
+                <option value="TUNAI">Tunai</option>
+                <option value="QRIS">QRIS (Midtrans)</option>
+                <option value="TRANSFER">Transfer / VA (Midtrans)</option>
+                <option value="DEBIT">Debit / Kredit (Midtrans)</option>
+              </select></label
+            >
+          </div>
+          <button
+            type="submit"
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#dce6d5] py-3.5 text-xs font-extrabold text-[#3e5036] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+            {%
+            if
+            not
+            keranjang
+            %}disabled{%
+            endif
+            %}
+          >
+            Proses pembayaran
+            <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
+          </button>
+        </form>
+        {% if keranjang %}<a
+          href="{% url 'bersihkan_keranjang' %}"
+          class="mt-3 block text-center text-[11px] text-[#aab0a6] hover:text-white"
+          >Kosongkan pesanan</a
+        >{% endif %}
+      </div>
+    </aside>
+  </div>
+</section>
+<div
+  id="cashier-scanner-modal"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-[#20231f]/70 p-4"
+>
+  <div class="w-full max-w-md rounded-2xl bg-[#fbfbf8] p-5 shadow-2xl">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="font-extrabold">Scan barcode produk</h2>
+      <button
+        type="button"
+        id="close-cashier-scanner"
+        class="rounded-lg bg-[#eeefe8] px-3 py-2 text-xs font-bold"
+      >
+        Tutup
+      </button>
+    </div>
+    <div id="cashier-reader" class="overflow-hidden rounded-xl"></div>
+    <p
+      id="cashier-scanner-status"
+      class="mt-3 text-center text-xs text-[#747a71]"
+    >
+      Arahkan barcode ke kamera.
+    </p>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  const paymentInput = document.getElementById("uang-dibayar");
+  const changeOutput = document.getElementById("nilai-kembalian");
+  const total = Number("{{ total_belanja }}");
+  const discountInput = document.getElementById("diskon");
+  const metodeSelect = document.querySelector(
+    'select[name="metode_pembayaran"]',
+  );
+  const kolomTunai = document.getElementById("kolom-tunai");
+  const barisKembalian = document.getElementById("baris-kembalian");
+  const perbaruiModePembayaran = () => {
+    const isTunai = metodeSelect.value === "TUNAI";
+    kolomTunai.classList.toggle("hidden", !isTunai);
+    barisKembalian.classList.toggle("hidden", !isTunai);
+    paymentInput.required = isTunai;
+    if (!isTunai) {
+      paymentInput.value = "";
+      changeOutput.textContent = "Rp 0";
+    }
+  };
+  metodeSelect?.addEventListener("change", perbaruiModePembayaran);
+  perbaruiModePembayaran();
+  discountInput?.addEventListener("input", () => {
+    const netTotal = Math.max(0, total - Number(discountInput.value || 0));
+    paymentInput.min = netTotal;
+  });
+  paymentInput?.addEventListener("input", () => {
+    const change = Math.max(0, Number(paymentInput.value || 0) - total);
+    changeOutput.textContent = "Rp " + change.toLocaleString("id-ID");
+  });
+  let cashierScanner;
+  const cashierModal = document.getElementById("cashier-scanner-modal");
+  const cashierSearchForm = document.querySelector('form[method="GET"]');
+  const openCashierScanner = () => {
+    cashierModal.classList.remove("hidden");
+    cashierModal.classList.add("flex");
+    cashierScanner = new Html5Qrcode("cashier-reader");
+    cashierScanner.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 250, height: 120 } },
+      (decodedText) => {
+        document.querySelector('input[name="barcode"]').value = decodedText;
+        cashierScanner.stop().finally(() => cashierSearchForm.submit());
+      },
+    );
+  };
+  const closeCashierScanner = async () => {
+    const scanner = cashierScanner;
+    cashierScanner = null;
+    try {
+      if (scanner) await scanner.stop();
+    } catch (error) {
+      console.warn("Scanner kamera dihentikan.", error);
+    } finally {
+      cashierModal.classList.add("hidden");
+      cashierModal.classList.remove("flex");
+      document.getElementById("cashier-reader").replaceChildren();
+    }
+  };
+  document
+    .getElementById("open-cashier-scanner")
+    ?.addEventListener("click", openCashierScanner);
+  document
+    .getElementById("close-cashier-scanner")
+    ?.addEventListener("click", closeCashierScanner);
+  cashierModal?.addEventListener("click", (event) => {
+    if (event.target === cashierModal) closeCashierScanner();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !cashierModal.classList.contains("hidden")) {
+      closeCashierScanner();
+    }
+  });
+</script>
+{% endblock %}

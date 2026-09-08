@@ -1,0 +1,94 @@
+{% extends 'POSsystem/base.html' %}
+<!-- title -->
+{% block title %}Stok Opname | Ecomora{% endblock %}
+<!-- active nav -->
+{% block gudang_active %}active{% endblock %} {% block content %}
+<section class="fade-up">
+  <div class="mb-8">
+    <p
+      class="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-[#879b75]"
+    >
+      Inventory accuracy
+    </p>
+    <h1 class="text-3xl font-extrabold">Stok opname.</h1>
+    <p class="mt-2 text-sm text-[#747a71]">
+      Samakan jumlah fisik di rak dengan stok sistem.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 gap-8 xl:grid-cols-[340px_1fr]">
+    <form
+      method="POST"
+      class="h-fit space-y-4 rounded-2xl border border-[#e5e5dc] bg-white p-5"
+    >
+      {% csrf_token %}<label class="block text-xs font-bold"
+        >Produk<select
+          name="produk_id"
+          required
+          class="field mt-2 w-full rounded-xl p-3 text-xs"
+        >
+          <option value="">Pilih produk</option>
+          {% for produk in daftar_produk %}
+          <option value="{{ produk.id }}">
+            {{ produk.nama_produk }} (sistem: {{ produk.stok_gudang }})
+          </option>
+          {% endfor %}
+        </select></label
+      ><label class="block text-xs font-bold"
+        >Stok fisik<input
+          type="number"
+          name="stok_fisik"
+          min="0"
+          required
+          class="field mt-2 w-full rounded-xl p-3 text-xs" /></label
+      ><label class="block text-xs font-bold"
+        >Keterangan<textarea
+          name="keterangan"
+          rows="3"
+          class="field mt-2 w-full rounded-xl p-3 text-xs"
+        ></textarea></label
+      ><button
+        class="btn-primary w-full rounded-xl py-3.5 text-xs font-extrabold"
+      >
+        Simpan opname
+      </button>
+    </form>
+    <div>
+      <h2 class="mb-4 text-lg font-extrabold">Riwayat opname</h2>
+      <div class="overflow-x-auto rounded-2xl border border-[#e5e5dc] bg-white">
+        <table class="w-full min-w-[600px] text-left text-xs">
+          <thead>
+            <tr
+              class="border-b bg-[#f5f6f1] text-[10px] uppercase text-[#8b9286]"
+            >
+              <th class="p-4">Waktu</th>
+              <th class="p-4">Produk</th>
+              <th class="p-4">Sistem</th>
+              <th class="p-4">Fisik</th>
+              <th class="p-4">Selisih</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in opname_terbaru %}
+            <tr class="border-b border-[#f0f0eb]">
+              <td class="p-4 text-[#8b9286]">
+                {{ item.tanggal|date:"d/m/Y H:i" }}
+              </td>
+              <td class="p-4 font-bold">{{ item.produk.nama_produk }}</td>
+              <td class="p-4">{{ item.stok_sistem }}</td>
+              <td class="p-4">{{ item.stok_fisik }}</td>
+              <td class="p-4 font-extrabold">{{ item.selisih }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="p-14 text-center text-[#9a9f96]">
+                Belum ada riwayat opname.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

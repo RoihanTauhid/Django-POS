@@ -1,0 +1,49 @@
+{% extends 'POSsystem/base.html' %}
+<!-- title -->
+{% block title %}Supplier Baru | Ecomora{% endblock %}
+<!-- active nav -->
+{% block gudang_active %}active{% endblock %} {% block eyebrow %}<span
+  class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]"
+  >Procurement / New supplier</span
+>{% endblock %} {% block content %}
+<section class="fade-up mx-auto max-w-xl">
+  <div class="mb-8">
+    <a
+      href="{% url 'halaman_pembelian' %}"
+      class="mb-5 inline-flex items-center gap-2 text-xs font-bold text-[#747a71]"
+      ><i data-lucide="arrow-left" class="h-4 w-4"></i>Kembali ke pembelian</a
+    >
+    <p
+      class="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-[#879b75]"
+    >
+      Supplier management
+    </p>
+    <h1 class="text-3xl font-extrabold">Tambah supplier.</h1>
+  </div>
+  <form
+    method="POST"
+    class="space-y-4 rounded-2xl border border-[#e5e5dc] bg-white p-5 sm:p-8"
+  >
+    {% csrf_token %}<label class="block text-xs font-bold"
+      >Nama supplier<input
+        name="nama"
+        required
+        class="field mt-2 w-full rounded-xl p-3.5 text-sm" /></label
+    ><label class="block text-xs font-bold"
+      >Telepon<input
+        name="telepon"
+        class="field mt-2 w-full rounded-xl p-3.5 text-sm" /></label
+    ><label class="block text-xs font-bold"
+      >Alamat<textarea
+        name="alamat"
+        rows="3"
+        class="field mt-2 w-full rounded-xl p-3.5 text-sm"
+      ></textarea></label
+    ><button
+      class="btn-primary w-full rounded-xl py-3.5 text-xs font-extrabold"
+    >
+      Simpan supplier
+    </button>
+  </form>
+</section>
+{% endblock %}

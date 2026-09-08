@@ -1,0 +1,108 @@
+{% extends 'POSsystem/base.html' %}
+<!-- title -->
+{% block title %}Pembelian | Ecomora{% endblock %}
+<!-- active nav -->
+{% block gudang_active %}active{% endblock %} {% block eyebrow %}<span
+  class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]"
+  >Procurement / Supplier</span
+>{% endblock %} {% block content %}
+<section class="fade-up">
+  <div class="mb-8">
+    <p
+      class="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-[#879b75]"
+    >
+      Restock management
+    </p>
+    <h1 class="text-3xl font-extrabold tracking-tight">Pembelian supplier.</h1>
+    <p class="mt-2 text-sm text-[#747a71]">
+      Catat barang masuk dan tambah stok secara otomatis.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 gap-8 xl:grid-cols-[340px_1fr]">
+    <form
+      method="POST"
+      class="h-fit space-y-4 rounded-2xl border border-[#e5e5dc] bg-white p-5"
+    >
+      {% csrf_token %}<label class="block text-xs font-bold"
+        >Produk<select
+          name="produk_id"
+          required
+          class="field mt-2 w-full rounded-xl p-3 text-xs"
+        >
+          <option value="">Pilih produk</option>
+          {% for produk in daftar_produk %}
+          <option value="{{ produk.id }}">{{ produk.nama_produk }}</option>
+          {% endfor %}
+        </select></label
+      ><label class="block text-xs font-bold"
+        >Supplier<select
+          name="supplier_id"
+          class="field mt-2 w-full rounded-xl p-3 text-xs"
+        >
+          <option value="">Tanpa supplier</option>
+          {% for supplier in daftar_supplier %}
+          <option value="{{ supplier.id }}">{{ supplier.nama }}</option>
+          {% endfor %}
+        </select></label
+      ><label class="block text-xs font-bold"
+        >Jumlah<input
+          type="number"
+          name="jumlah"
+          min="1"
+          required
+          class="field mt-2 w-full rounded-xl p-3 text-xs" /></label
+      ><label class="block text-xs font-bold"
+        >Harga satuan<input
+          type="number"
+          name="harga_satuan"
+          min="0"
+          step="0.01"
+          required
+          class="field mt-2 w-full rounded-xl p-3 text-xs" /></label
+      ><button
+        type="submit"
+        class="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-xs font-extrabold"
+      >
+        Simpan pembelian <i data-lucide="check" class="h-4 w-4"></i>
+      </button>
+    </form>
+    <div>
+      <h2 class="mb-4 text-lg font-extrabold">Pembelian terbaru</h2>
+      <div class="overflow-x-auto rounded-2xl border border-[#e5e5dc] bg-white">
+        <table class="w-full min-w-[650px] text-left text-xs">
+          <thead>
+            <tr
+              class="border-b bg-[#f5f6f1] text-[10px] uppercase tracking-wider text-[#8b9286]"
+            >
+              <th class="p-4">Tanggal</th>
+              <th class="p-4">Produk</th>
+              <th class="p-4">Supplier</th>
+              <th class="p-4">Qty</th>
+              <th class="p-4 text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in pembelian_terbaru %}
+            <tr class="border-b border-[#f0f0eb] last:border-0">
+              <td class="p-4 text-[#8b9286]">
+                {{ item.tanggal|date:"d/m/Y H:i" }}
+              </td>
+              <td class="p-4 font-bold">{{ item.produk.nama_produk }}</td>
+              <td class="p-4">{{ item.supplier|default:"-" }}</td>
+              <td class="p-4 font-bold">{{ item.jumlah }}</td>
+              <td class="p-4 text-right font-extrabold">Rp {{ item.total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="p-14 text-center text-[#9a9f96]">
+                Belum ada pembelian.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends 'POSsystem/base.html' %}
+<!-- title -->
+{% block title %}Produk Baru | Ecomora{% endblock %} {% block eyebrow %}<span
+  class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]"
+  >Catalog / New product</span
+>{% endblock %} {% block extra_head %}
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+{% endblock %} {% block content %}
+<section class="fade-up mx-auto max-w-3xl">
+  <div class="mb-8">
+    <a
+      href="{% url 'halaman_kasir' %}"
+      class="mb-5 inline-flex items-center gap-2 text-xs font-bold text-[#747a71]"
+      ><i data-lucide="arrow-left" class="h-4 w-4"></i>Kembali ke kasir</a
+    >
+    <p
+      class="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-[#879b75]"
+    >
+      Catalog management
+    </p>
+    <h1 class="text-3xl font-extrabold tracking-tight">
+      Tambahkan produk baru.
+    </h1>
+    <p class="mt-2 text-sm text-[#747a71]">
+      Lengkapi detail agar produk siap dijual.
+    </p>
+  </div>
+  <form
+    action="{% if produk_edit %}{% url 'edit_produk' produk_edit.id %}{% else %}{% url 'tambah_produk_baru' %}{% endif %}"
+    method="POST"
+    enctype="multipart/form-data"
+    class="space-y-6 rounded-2xl border border-[#e5e5dc] bg-white p-5 sm:p-8"
+  >
+    {% csrf_token %}<label class="block text-xs font-bold"
+      >Nama produk<input
+        type="text"
+        name="nama_produk"
+        required
+        value="{{ produk_edit.nama_produk|default:'' }}"
+        class="field mt-2 w-full rounded-xl p-3.5 text-sm"
+    /></label>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <label class="block text-xs font-bold"
+        >Kode barcode / SKU<input
+          type="text"
+          name="kode_barcode"
+          required
+          value="{{ produk_edit.kode_barcode|default:'' }}"
+          class="field mt-2 w-full rounded-xl p-3.5 text-sm" /></label
+      ><button
+        type="button"
+        id="open-product-scanner"
+        class="btn-soft mt-2 inline-flex items-center gap-2 rounded-xl px-4 py-3 text-xs font-extrabold"
+      >
+        <i data-lucide="camera" class="h-4 w-4"></i>Scan barcode dengan kamera</button
+      ><label class="block text-xs font-bold"
+        >Kategori<select
+          name="kategori_id"
+          class="field mt-2 w-full rounded-xl p-3.5 text-sm"
+        >
+          <option value="">Pilih kategori</option>
+          {% for kat in semua_kategori %}
+          <option
+            value="{{ kat.id }}"
+            {%
+            if
+            produk_edit.kategori_id=""
+            ="kat.id"
+            %}selected{%
+            endif
+            %}
+          >
+            {{ kat.nama }}
+          </option>
+          {% endfor %}</select
+        ><a
+          href="{% url 'tambah_kategori' %}"
+          class="mt-2 inline-flex text-[11px] font-bold text-[#607251]"
+          >+ Tambah kategori</a
+        ></label
+      >
+    </div>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <label class="block text-xs font-bold"
+        >Harga beli<input
+          type="number"
+          step="0.01"
+          name="harga_beli"
+          required
+          value="{{ produk_edit.harga_beli|default:'' }}"
+          class="field mt-2 w-full rounded-xl p-3.5 text-sm" /></label
+      ><label class="block text-xs font-bold"
+        >Harga jual<input
+          type="number"
+          step="0.01"
+          name="harga_jual"
+          required
+          value="{{ produk_edit.harga_jual|default:'' }}"
+          class="field mt-2 w-full rounded-xl p-3.5 text-sm" /></label
+      ><label class="block text-xs font-bold"
+        >Stok awal<input
+          type="number"
+          name="stok_gudang"
+          required
+          value="{{ produk_edit.stok_gudang|default:'' }}"
+          class="field mt-2 w-full rounded-xl p-3.5 text-sm"
+      /></label>
+    </div>
+    <label class="block text-xs font-bold"
+      >Stok minimum<input
+        type="number"
+        name="stok_minimum"
+        min="0"
+        value="{{ produk_edit.stok_minimum|default:'5' }}"
+        class="field mt-2 w-full rounded-xl p-3.5 text-sm"
+    /></label>
+    <label class="block text-xs font-bold"
+      >Foto produk <span class="font-normal text-[#9a9f96]">Opsional</span
+      ><input
+        type="file"
+        name="gambar"
+        accept="image/*"
+        class="field mt-2 w-full rounded-xl p-2.5 text-xs" /></label
+    ><button
+      type="submit"
+      class="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-xs font-extrabold"
+    >
+      {% if produk_edit %}Perbarui produk{% else %}Simpan produk{% endif %}
+      <i data-lucide="check" class="h-4 w-4"></i>
+    </button>
+  </form>
+</section>
+<div
+  id="product-scanner-modal"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-[#20231f]/70 p-4"
+>
+  <div class="w-full max-w-md rounded-2xl bg-[#fbfbf8] p-5 shadow-2xl">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="font-extrabold">Scan barcode produk</h2>
+      <button
+        type="button"
+        id="close-product-scanner"
+        class="rounded-lg bg-[#eeefe8] px-3 py-2 text-xs font-bold"
+      >
+        Tutup
+      </button>
+    </div>
+    <div id="product-reader" class="overflow-hidden rounded-xl"></div>
+    <p
+      id="product-scanner-status"
+      class="mt-3 text-center text-xs text-[#747a71]"
+    >
+      Arahkan barcode ke dalam kotak kamera.
+    </p>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  let productScanner;
+  let nativeBarcodeDetector;
+  let nativeScanTimer;
+  const productModal = document.getElementById("product-scanner-modal");
+  const productStatus = document.getElementById("product-scanner-status");
+  const productBarcode = document.querySelector('input[name="kode_barcode"]');
+  const openProductScanner = () => {
+    if (typeof Html5Qrcode === "undefined") {
+      productStatus.textContent =
+        "Scanner gagal dimuat. Periksa koneksi internet.";
+      productModal.classList.remove("hidden");
+      productModal.classList.add("flex");
+      return;
+    }
+    productModal.classList.remove("hidden");
+    productModal.classList.add("flex");
+    productStatus.textContent = "Arahkan barcode ke dalam kotak kamera.";
+    productScanner = new Html5Qrcode("product-reader", { verbose: false });
+    Html5Qrcode.getCameras()
+      .then((cameras) => {
+        if (!cameras.length) throw new Error("Kamera tidak ditemukan");
+        const backCamera = cameras.find((camera) => /back|rear|environment|belakang/i.test(camera.label)) || cameras[cameras.length - 1];
+        return productScanner.start(
+          backCamera.id,
+        {
+          fps: 10,
+          qrbox: { width: 280, height: 140 },
+          aspectRatio: 1.777778,
+          formatsToSupport: Object.values(Html5QrcodeSupportedFormats),
+          experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+        },
+        (decodedText) => {
+          productBarcode.value = decodedText.trim();
+          productBarcode.dispatchEvent(new Event("input", { bubbles: true }));
+          productStatus.textContent = "Barcode terbaca: " + decodedText;
+          closeProductScanner();
+        },
+      )
+      .then(() => {
+        if ("BarcodeDetector" in window) {
+          try { nativeBarcodeDetector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "itf"] }); } catch (error) { nativeBarcodeDetector = null; }
+          const video = document.querySelector("#product-reader video");
+          const readNativeBarcode = async () => { if (!nativeBarcodeDetector || !video || video.readyState < 2) return; try { const codes = await nativeBarcodeDetector.detect(video); if (codes.length && codes[0].rawValue) { productBarcode.value = codes[0].rawValue.trim(); productBarcode.dispatchEvent(new Event("input", { bubbles: true })); productStatus.textContent = "Barcode terbaca: " + productBarcode.value; await closeProductScanner(); } } catch (error) { console.warn("BarcodeDetector gagal membaca.", error); } };
+          nativeScanTimer = window.setInterval(readNativeBarcode, 250);
+        }
+      })
+      .catch(() => {
+        productStatus.textContent =
+          "Kamera tidak dapat dibuka. Izinkan akses kamera dan coba lagi.";
+      });
+  };
+  const closeProductScanner = async () => {
+    const scanner = productScanner;
+    productScanner = null;
+    if (nativeScanTimer) window.clearInterval(nativeScanTimer);
+    nativeScanTimer = null;
+    nativeBarcodeDetector = null;
+    try {
+      if (scanner) await scanner.stop();
+    } catch (error) {
+      console.warn("Scanner kamera dihentikan.", error);
+    } finally {
+      productModal.classList.add("hidden");
+      productModal.classList.remove("flex");
+      document.getElementById("product-reader").replaceChildren();
+    }
+  };
+  document
+    .getElementById("open-product-scanner")
+    ?.addEventListener("click", openProductScanner);
+  document
+    .getElementById("close-product-scanner")
+    ?.addEventListener("click", closeProductScanner);
+  productModal?.addEventListener("click", (event) => {
+    if (event.target === productModal) closeProductScanner();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !productModal.classList.contains("hidden"))
+      closeProductScanner();
+  });
+</script>
+{% endblock %}

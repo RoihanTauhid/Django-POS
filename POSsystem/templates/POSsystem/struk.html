@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Struk - {{ transaksi.kode_transaksi }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* CSS khusus agar saat di-print, elemen tombol hilang dan ukurannya pas */
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          background-color: white;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="flex justify-center bg-[#f1f2eb] py-10 font-mono text-sm text-[#20231f]"
+  >
+    <!-- Kertas Struk (Lebar disesuaikan printer 80mm) -->
+    <div
+      class="w-80 rounded-sm border border-[#e5e5dc] bg-[#fffefa] p-6 text-black shadow-xl"
+    >
+      <!-- Header Toko -->
+      <div class="text-center mb-4">
+        <h1 class="font-sans text-xl font-extrabold tracking-tight">
+          ECOMORA<span class="text-[#879b75]">.</span>
+        </h1>
+        <p class="text-xs">Jl. Teknologi No. 123, Jakarta</p>
+        <p class="text-xs">Telp: 0812-3456-7890</p>
+      </div>
+
+      <hr class="border-black border-dashed my-2" />
+
+      <!-- Info Transaksi -->
+      <div class="text-xs mb-2">
+        <p>No : {{ transaksi.kode_transaksi }}</p>
+        <p>Tgl : {{ transaksi.tanggal|date:"d/m/Y H:i" }}</p>
+      </div>
+
+      <hr class="border-black border-dashed my-2" />
+
+      <!-- Item Belanja -->
+      <div class="mb-2">
+        {% for item in detail_transaksi %}
+        <div class="flex justify-between items-start mb-1 text-xs">
+          <div class="w-1/2">
+            <p>{{ item.produk.nama_produk }}</p>
+            <p class="text-[10px] text-gray-600">
+              {{ item.jumlah }} x {{ item.produk.harga_jual }}
+            </p>
+          </div>
+          <div class="w-1/2 text-right">
+            <p>Rp {{ item.subtotal }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <hr class="border-black border-dashed my-2" />
+
+      <!-- Total -->
+      <div class="flex justify-between font-bold text-sm my-2">
+        <span>TOTAL</span>
+        <span>Rp {{ transaksi.total_harga }}</span>
+      </div>
+      {% if transaksi.metode_pembayaran == 'TUNAI' %}
+      <div class="flex justify-between text-xs my-1">
+        <span>Uang diberikan</span><span>Rp {{ transaksi.uang_dibayar }}</span>
+      </div>
+      <div class="flex justify-between text-xs my-1">
+        <span>Kembalian</span><span>Rp {{ transaksi.kembalian }}</span>
+      </div>
+      {% else %}
+      <div class="flex justify-between text-xs my-1">
+        <span>Metode</span>
+        <span>{{ transaksi.metode_tampil }}</span>
+      </div>
+      {% endif %} {% if transaksi.status == 'PENDING' %}
+      <p
+        class="my-2 rounded bg-[#fdf3d7] px-2 py-1 text-center text-[10px] font-bold uppercase tracking-wide text-[#8a6d1a]"
+      >
+        Menunggu pembayaran
+      </p>
+      {% elif transaksi.status == 'VOID' %}
+      <p
+        class="my-2 rounded bg-[#fde2e2] px-2 py-1 text-center text-[10px] font-bold uppercase tracking-wide text-[#b04848]"
+      >
+        Transaksi dibatalkan
+      </p>
+      {% endif %}
+
+      <hr class="border-black border-dashed my-2" />
+
+      <!-- Footer -->
+      <div class="text-center text-xs mt-4">
+        <p>Terima Kasih Atas Kunjungan Anda</p>
+        <p>Barang yang sudah dibeli tidak dapat ditukar/dikembalikan.</p>
+      </div>
+
+      <!-- Tombol Aksi (Akan hilang saat dicetak berkat class no-print) -->
+      <div class="no-print mt-8 flex flex-col gap-2">
+        {% if transaksi.status == 'PENDING' and transaksi.snap_token %}<a
+          href="{% url 'halaman_pembayaran' transaksi.id %}"
+          class="rounded bg-[#20231f] py-2 text-center font-sans font-bold text-white hover:bg-[#607251]"
+        >
+          Lanjutkan pembayaran online </a
+        >{% endif %}
+        <button
+          onclick="window.print()"
+          class="rounded bg-[#20231f] py-2 font-sans font-bold text-white hover:bg-[#607251]"
+        >
+          Cetak struk
+        </button>
+        <a
+          href="{% url 'halaman_kasir' %}"
+          class="rounded bg-[#e9eee4] py-2 text-center font-sans font-bold text-[#53634a] hover:bg-[#dce6d5]"
+        >
+          Kembali ke Kasir
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
