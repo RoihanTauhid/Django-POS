@@ -18,6 +18,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from .decorators import group_required
+
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
@@ -54,6 +56,7 @@ def logout_view(request):
 
 
 @login_required
+@group_required('Owner')
 def backup_database(request):
     if not request.user.is_superuser:
         return HttpResponse('Forbidden', status=403)
@@ -62,6 +65,7 @@ def backup_database(request):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def halaman_kasir(request):
     keranjang = request.session.get('keranjang', {})
     query = request.GET.get('barcode', '').strip()
@@ -112,6 +116,7 @@ def tambah_item_ke_session(keranjang, produk):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def tambah_ke_keranjang(request, produk_id):
     keranjang = request.session.get('keranjang', {})
     produk = get_object_or_404(Produk, id=produk_id)
@@ -124,6 +129,7 @@ def tambah_ke_keranjang(request, produk_id):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def ubah_keranjang(request, produk_id, aksi):
     keranjang = request.session.get('keranjang', {})
     produk_key = str(produk_id)
@@ -151,12 +157,14 @@ def ubah_keranjang(request, produk_id, aksi):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def bersihkan_keranjang(request):
     request.session.pop('keranjang', None)
     return redirect('halaman_kasir')
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def checkout(request):
     if request.method != 'POST':
         return redirect('halaman_kasir')
@@ -307,6 +315,7 @@ def batalkan_transaksi_gateway(transaksi_id):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def halaman_pembayaran(request, transaksi_id):
     """Halaman pembayaran online dengan popup Midtrans Snap."""
     transaksi = get_object_or_404(Transaksi, id=transaksi_id)
@@ -328,6 +337,7 @@ def halaman_pembayaran(request, transaksi_id):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def status_pembayaran(request, transaksi_id):
     """Endpoint JSON untuk polling status pembayaran dari halaman bayar."""
     transaksi = get_object_or_404(Transaksi, id=transaksi_id)
@@ -335,6 +345,7 @@ def status_pembayaran(request, transaksi_id):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def batalkan_pembayaran(request, transaksi_id):
     """Kasir membatalkan pembayaran online yang belum selesai."""
     if request.method == 'POST':
@@ -388,6 +399,7 @@ def midtrans_notification(request):
 
 
 @login_required
+@group_required('Kasir', 'Supervisor', 'Owner')
 def cetak_struk(request, transaksi_id):
     transaksi = get_object_or_404(Transaksi, id=transaksi_id)
     return render(request, 'POSsystem/struk.html', {
@@ -397,6 +409,7 @@ def cetak_struk(request, transaksi_id):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def halaman_gudang(request):
     if request.method == 'POST':
         kode_barcode = request.POST.get('kode_barcode', '').strip()
@@ -431,6 +444,7 @@ def halaman_gudang(request):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def halaman_stok(request):
     query = request.GET.get('q', '').strip()
     produk = Produk.objects.select_related('kategori').all()
@@ -443,6 +457,7 @@ def halaman_stok(request):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def tambah_produk_baru(request):
     if request.method == 'POST':
         kategori_id = request.POST.get('kategori_id')
@@ -461,6 +476,7 @@ def tambah_produk_baru(request):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def edit_produk(request, produk_id):
     produk = get_object_or_404(Produk, id=produk_id)
     if request.method == 'POST':
@@ -479,6 +495,7 @@ def edit_produk(request, produk_id):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def hapus_produk(request, produk_id):
     if request.method == 'POST':
         try:
@@ -489,6 +506,7 @@ def hapus_produk(request, produk_id):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def tambah_kategori(request):
     if request.method == 'POST':
         nama = request.POST.get('nama', '').strip()
@@ -499,6 +517,7 @@ def tambah_kategori(request):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def halaman_pembelian(request):
     if request.method == 'POST':
         produk = get_object_or_404(Produk, id=request.POST.get('produk_id'))
@@ -521,6 +540,7 @@ def halaman_pembelian(request):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def tambah_supplier(request):
     if request.method == 'POST':
         nama = request.POST.get('nama', '').strip()
@@ -531,6 +551,7 @@ def tambah_supplier(request):
 
 
 @login_required
+@group_required('Owner')
 def halaman_analytics(request):
     hari_ini = timezone.localdate()
     transaksi = Transaksi.objects.filter(tanggal__date=hari_ini).order_by('-tanggal')
@@ -575,6 +596,7 @@ def halaman_analytics(request):
 
 
 @login_required
+@group_required('Owner')
 def export_transaksi(request):
     tanggal_mulai = request.GET.get('mulai')
     tanggal_selesai = request.GET.get('selesai')
@@ -592,6 +614,7 @@ def export_transaksi(request):
 
 
 @login_required
+@group_required('Supervisor', 'Owner')
 def void_transaksi(request, transaksi_id):
     if request.method == 'POST':
         with transaction.atomic():
@@ -608,6 +631,7 @@ def void_transaksi(request, transaksi_id):
 
 
 @login_required
+@group_required('Supervisor', 'Owner')
 def retur_transaksi(request, detail_id):
     detail = get_object_or_404(DetailTransaksi, id=detail_id)
     if request.method == 'POST':
@@ -624,6 +648,7 @@ def retur_transaksi(request, detail_id):
 
 
 @login_required
+@group_required('Admin Gudang', 'Owner')
 def halaman_opname(request):
     if request.method == 'POST':
         produk = get_object_or_404(Produk, id=request.POST.get('produk_id'))
@@ -639,11 +664,13 @@ def halaman_opname(request):
 
 
 @login_required
+@group_required('Owner')
 def halaman_audit(request):
     return render(request, 'POSsystem/audit.html', {'log_aktivitas': AuditLog.objects.select_related('pengguna').all()[:100]})
 
 
 @login_required
+@group_required('Owner')
 def halaman_riwayat_transaksi(request):
     hari_ini = timezone.localdate()
     transaksi_sebelumnya = Transaksi.objects.exclude(tanggal__date=hari_ini).order_by('-tanggal')
