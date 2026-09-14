@@ -1,0 +1,114 @@
+{% extends 'POSsystem/base.html' %}
+{% load static %}
+{% block title %}Semua Transaksi - Ecomora POS{% endblock %}
+
+{% block content %}
+<section class="max-w-6xl">
+  <div class="mb-6 flex items-center gap-4">
+    <a
+      href="{% url 'halaman_riwayat_transaksi' %}"
+      class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e5e5dc] bg-white text-[#8b9286] hover:bg-[#f1f2eb]"
+    >
+      <i data-lucide="arrow-left" class="h-5 w-5"></i>
+    </a>
+    <h1 class="text-2xl font-extrabold tracking-tight">Daftar Transaksi</h1>
+  </div>
+
+  <div class="mb-8 rounded-2xl border border-[#e5e5dc] bg-white p-5">
+    <form method="get" class="flex flex-col sm:flex-row items-end gap-4">
+      <div class="w-full sm:w-auto flex-1">
+        <label class="mb-1 block text-xs font-bold text-[#8b9286]">Dari Tanggal</label>
+        <input
+          type="date"
+          name="start_date"
+          value="{{ start_date|default_if_none:'' }}"
+          class="w-full rounded-xl border border-[#e5e5dc] bg-[#fafbf7] px-4 py-2.5 text-sm font-bold outline-none focus:border-[#879b75]"
+        />
+      </div>
+      <div class="w-full sm:w-auto flex-1">
+        <label class="mb-1 block text-xs font-bold text-[#8b9286]">Sampai Tanggal</label>
+        <input
+          type="date"
+          name="end_date"
+          value="{{ end_date|default_if_none:'' }}"
+          class="w-full rounded-xl border border-[#e5e5dc] bg-[#fafbf7] px-4 py-2.5 text-sm font-bold outline-none focus:border-[#879b75]"
+        />
+      </div>
+      <div class="w-full sm:w-auto">
+        <button
+          type="submit"
+          class="btn-primary w-full rounded-xl px-6 py-2.5 text-sm font-extrabold"
+        >
+          Filter
+        </button>
+      </div>
+      {% if start_date or end_date %}
+      <div class="w-full sm:w-auto">
+        <a
+          href="{% url 'halaman_daftar_transaksi' %}"
+          class="btn-soft block text-center w-full rounded-xl px-6 py-2.5 text-sm font-extrabold"
+        >
+          Reset
+        </a>
+      </div>
+      {% endif %}
+    </form>
+  </div>
+
+  {% include 'POSsystem/riwayat_table.html' with transaksi_list=transaksi_list empty_msg="Tidak ada data transaksi pada rentang tanggal ini." %}
+
+  <!-- Modal Detail Transaksi -->
+  <dialog id="modalDetail" class="w-full max-w-lg rounded-2xl p-0 backdrop:bg-black/40 backdrop:backdrop-blur-sm">
+    <div class="p-6">
+      <div class="mb-6 flex items-center justify-between">
+        <h3 class="text-lg font-extrabold">Detail Transaksi <span id="modalKode" class="text-[#879b75]"></span></h3>
+        <button onclick="document.getElementById('modalDetail').close()" class="text-[#8b9286] hover:text-[#20231f]">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-[#e5e5dc]">
+        <table class="w-full text-left text-xs">
+          <thead class="border-b bg-[#f5f6f1] text-[10px] uppercase text-[#8b9286]">
+            <tr>
+              <th class="p-3">Produk</th>
+              <th class="p-3 text-right">Harga</th>
+              <th class="p-3 text-center">Qty</th>
+              <th class="p-3 text-right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="modalBody">
+            <!-- Diisi lewat JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </dialog>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function bukaDetail(button) {
+    const kode = button.getAttribute('data-kode');
+    const items = JSON.parse(button.getAttribute('data-items'));
+    
+    document.getElementById('modalKode').textContent = '#' + kode;
+    const modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = '';
+    
+    items.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.className = 'border-b border-[#f0f0eb] last:border-0';
+      tr.innerHTML = `
+        <td class="p-3 font-bold">\${item.nama}</td>
+        <td class="p-3 text-right">Rp \${Number(item.harga).toLocaleString('id-ID')}</td>
+        <td class="p-3 text-center">\${item.qty}</td>
+        <td class="p-3 text-right font-extrabold text-[#879b75]">Rp \${Number(item.subtotal).toLocaleString('id-ID')}</td>
+      `;
+      modalBody.appendChild(tr);
+    });
+    
+    document.getElementById('modalDetail').showModal();
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,503 @@
+--- old_base.html	2026-09-10 10:46:31
++++ POSsystem/templates/POSsystem/base.html	2026-09-10 10:38:37
+@@ -2,268 +2,241 @@
+ {% load role_tags %}
+ <!doctype html>
+ <html lang="id">
+-  <head>
+-    <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>{% block title %}Ecomora POS{% endblock %}</title>
+-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+-    <link
+-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+-      rel="stylesheet"
+-    />
+-    <script src="https://cdn.tailwindcss.com"></script>
+-    <script src="https://unpkg.com/lucide@latest"></script>
+-    <style>
+-      :root {
+-        --ink: #20231f;
+-        --muted: #747a71;
+-        --paper: #f6f5f0;
+-        --line: #e5e5dc;
+-        --sage: #879b75;
+-        --sage-dark: #607251;
+-        --warm: #e7b98a;
++
++<head>
++  <meta charset="UTF-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++  <title>{% block title %}Ecomora POS{% endblock %}</title>
++  <link rel="preconnect" href="https://fonts.googleapis.com" />
++  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
++  <link
++    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
++    rel="stylesheet" />
++  <script src="https://cdn.tailwindcss.com"></script>
++  <script src="https://unpkg.com/lucide@latest"></script>
++  <style>
++    :root {
++      --ink: #20231f;
++      --muted: #747a71;
++      --paper: #f6f5f0;
++      --line: #e5e5dc;
++      --sage: #879b75;
++      --sage-dark: #607251;
++      --warm: #e7b98a;
++    }
++
++    * {
++      box-sizing: border-box;
++    }
++
++    body {
++      background: var(--paper);
++      color: var(--ink);
++      font-family: "Manrope", sans-serif;
++    }
++
++    .mono {
++      font-family: "DM Mono", monospace;
++    }
++
++    .shell {
++      background: #fbfbf8;
++      border: 1px solid var(--line);
++      box-shadow: 0 24px 70px rgba(42, 47, 38, 0.07);
++    }
++
++    .nav-link {
++      color: var(--muted);
++      transition: 0.2s ease;
++    }
++
++    .nav-link:hover,
++    .nav-link.active {
++      color: var(--ink);
++      background: #eeefe8;
++    }
++
++    .nav-link.active {
++      font-weight: 700;
++    }
++
++    .field {
++      background: #f6f6f1;
++      border: 1px solid var(--line);
++      transition: 0.2s ease;
++    }
++
++    .field:focus {
++      outline: none;
++      border-color: var(--sage);
++      box-shadow: 0 0 0 3px rgba(135, 155, 117, 0.16);
++    }
++
++    .btn-primary {
++      background: var(--ink);
++      color: white;
++      transition: 0.2s ease;
++    }
++
++    .btn-primary:hover {
++      background: var(--sage-dark);
++      transform: translateY(-1px);
++    }
++
++    .btn-soft {
++      background: #e9eee4;
++      color: #53634a;
++      transition: 0.2s ease;
++    }
++
++    .btn-soft:hover {
++      background: #dce6d5;
++    }
++
++    .product-card {
++      border: 1px solid var(--line);
++      background: #fff;
++      transition: 0.25s ease;
++    }
++
++    .product-card:hover {
++      border-color: #bcc8b4;
++      box-shadow: 0 14px 30px rgba(42, 47, 38, 0.09);
++      transform: translateY(-2px);
++    }
++
++    .fade-up {
++      animation: fadeUp 0.5s ease both;
++    }
++
++    @keyframes fadeUp {
++      from {
++        opacity: 0;
++        transform: translateY(8px);
+       }
+-      * {
+-        box-sizing: border-box;
++
++      to {
++        opacity: 1;
++        transform: translateY(0);
+       }
+-      body {
+-        background: var(--paper);
+-        color: var(--ink);
+-        font-family: "Manrope", sans-serif;
++    }
++
++    @media (max-width: 900px) {
++      .desktop-nav {
++        display: none;
+       }
+-      .mono {
+-        font-family: "DM Mono", monospace;
+-      }
+-      .shell {
+-        background: #fbfbf8;
+-        border: 1px solid var(--line);
+-        box-shadow: 0 24px 70px rgba(42, 47, 38, 0.07);
+-      }
+-      .nav-link {
+-        color: var(--muted);
+-        transition: 0.2s ease;
+-      }
+-      .nav-link:hover,
+-      .nav-link.active {
+-        color: var(--ink);
+-        background: #eeefe8;
+-      }
+-      .nav-link.active {
+-        font-weight: 700;
+-      }
+-      .field {
+-        background: #f6f6f1;
+-        border: 1px solid var(--line);
+-        transition: 0.2s ease;
+-      }
+-      .field:focus {
+-        outline: none;
+-        border-color: var(--sage);
+-        box-shadow: 0 0 0 3px rgba(135, 155, 117, 0.16);
+-      }
+-      .btn-primary {
+-        background: var(--ink);
+-        color: white;
+-        transition: 0.2s ease;
+-      }
+-      .btn-primary:hover {
+-        background: var(--sage-dark);
+-        transform: translateY(-1px);
+-      }
+-      .btn-soft {
+-        background: #e9eee4;
+-        color: #53634a;
+-        transition: 0.2s ease;
+-      }
+-      .btn-soft:hover {
+-        background: #dce6d5;
+-      }
+-      .product-card {
+-        border: 1px solid var(--line);
+-        background: #fff;
+-        transition: 0.25s ease;
+-      }
+-      .product-card:hover {
+-        border-color: #bcc8b4;
+-        box-shadow: 0 14px 30px rgba(42, 47, 38, 0.09);
+-        transform: translateY(-2px);
+-      }
+-      .fade-up {
+-        animation: fadeUp 0.5s ease both;
+-      }
+-      @keyframes fadeUp {
+-        from {
+-          opacity: 0;
+-          transform: translateY(8px);
+-        }
+-        to {
+-          opacity: 1;
+-          transform: translateY(0);
+-        }
+-      }
+-      @media (max-width: 900px) {
+-        .desktop-nav {
+-          display: none;
+-        }
+-      }
+-    </style>
+-    {% block extra_head %}{% endblock %}
+-  </head>
+-  <body class="min-h-screen p-3 sm:p-5 lg:p-8">
+-    <div
+-      class="shell mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1500px] overflow-hidden rounded-[28px]"
+-    >
+-      <aside
+-        class="hidden w-[230px] shrink-0 border-r border-[#e5e5dc] bg-[#f1f2eb] p-5 lg:flex lg:flex-col"
+-      >
+-        <a
+-          href="{% url 'halaman_kasir' %}"
+-          class="mb-12 flex items-center gap-3 px-2"
+-        >
+-          <span
+-            class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#20231f] text-sm font-extrabold text-white"
+-            >e</span
+-          >
+-          <span class="text-[15px] font-extrabold tracking-tight"
+-            >ecomora<span class="text-[#879b75]">.</span></span
+-          >
+-        </a>
+-        <p
+-          class="mono mb-3 px-3 text-[10px] uppercase tracking-[.18em] text-[#9a9f96]"
+-        >
+-          Workspace
++    }
++  </style>
++  {% block extra_head %}{% endblock %}
++</head>
++
++<body class="h-screen overflow-hidden p-3 sm:p-5 lg:p-8">
++  <div class="shell mx-auto flex h-full max-w-[1500px] overflow-hidden rounded-[28px]">
++    <aside class="hidden w-[230px] shrink-0 border-r border-[#e5e5dc] bg-[#f1f2eb] p-5 lg:flex lg:flex-col">
++      <a href="{% url 'halaman_kasir' %}" class="mb-12 flex items-center gap-3 px-2">
++        <span
++          class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#20231f] text-sm font-extrabold text-white">e</span>
++        <span class="text-[15px] font-extrabold tracking-tight">ecomora<span class="text-[#879b75]">.</span></span>
++      </a>
++      <p class="mono mb-3 px-3 text-[10px] uppercase tracking-[.18em] text-[#9a9f96]">
++        Workspace
++      </p>
++      <nav class="space-y-1 text-[13px]">
++        {% if request.user|has_group:"Kasir,Supervisor" %}
++        <a href="{% url 'halaman_kasir' %}"
++          class="nav-link {% block kasir_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="layout-grid" class="h-4 w-4"></i>Kasir & Produk</a>
++        {% endif %}
++        {% if request.user|has_group:"Admin Gudang,Supervisor" %}
++        <a href="{% url 'halaman_gudang' %}"
++          class="nav-link {% block gudang_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="package" class="h-4 w-4"></i>Inventory Gudang</a>
++        <a href="{% url 'halaman_stok' %}"
++          class="nav-link {% block stok_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="boxes" class="h-4 w-4"></i>Stok Tersisa</a>
++        <a href="{% url 'halaman_pembelian' %}" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="truck" class="h-4 w-4"></i>Pembelian</a>
++        <a href="{% url 'tambah_supplier' %}" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="user-plus" class="h-4 w-4"></i>Supplier Baru</a>
++        <a href="{% url 'halaman_opname' %}" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="clipboard-check" class="h-4 w-4"></i>Stok Opname</a>
++        {% endif %}
++        {% if request.user|has_group:"Supervisor,Owner" %}
++        <a href="{% url 'halaman_audit' %}"
++          class="nav-link {% block audit_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="history" class="h-4 w-4"></i>Audit Aktivitas</a>
++        {% endif %}
++        {% if request.user|has_group:"Owner" %}
++        <a href="{% url 'halaman_analytics' %}"
++          class="nav-link {% block analytics_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
++            data-lucide="chart-no-axes-combined" class="h-4 w-4"></i>Analytics</a>
++        {% endif %}
++        {% if user.is_superuser %}<a href="{% url 'backup_database' %}"
++          class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"><i data-lucide="database-backup"
++            class="h-4 w-4"></i>Backup
++          database</a>{% endif %}
++      </nav>
++      <div class="mt-auto rounded-2xl border border-[#dfe3d8] bg-[#fafbf7] p-4">
++        <div class="mb-3 flex items-center justify-between">
++          <span class="h-2 w-2 rounded-full bg-[#879b75]"></span><span class="mono text-[10px] text-[#8b9286]">LIVE
++            SYSTEM</span>
++        </div>
++        <p class="text-xs font-semibold leading-5">
++          Semua operasional<br />dalam satu ruang.
+         </p>
+-        <nav class="space-y-1 text-[13px]">
+-          <a
+-            href="{% url 'halaman_kasir' %}"
+-            class="nav-link {% block kasir_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="layout-grid" class="h-4 w-4"></i>Kasir & Produk</a
+-          >
+-          <a
+-            href="{% url 'halaman_gudang' %}"
+-            class="nav-link {% block gudang_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="package" class="h-4 w-4"></i>Inventory Gudang</a
+-          >
+-          <a
+-            href="{% url 'halaman_stok' %}"
+-            class="nav-link {% block stok_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="boxes" class="h-4 w-4"></i>Stok Tersisa</a
+-          >
+-          <a
+-            href="{% url 'halaman_pembelian' %}"
+-            class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="truck" class="h-4 w-4"></i>Pembelian</a
+-          >
+-          <a
+-            href="{% url 'tambah_supplier' %}"
+-            class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="user-plus" class="h-4 w-4"></i>Supplier Baru</a
+-          >
+-          <a
+-            href="{% url 'halaman_opname' %}"
+-            class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="clipboard-check" class="h-4 w-4"></i>Stok Opname</a
+-          >
+-          <a
+-            href="{% url 'halaman_audit' %}"
+-            class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="history" class="h-4 w-4"></i>Audit Aktivitas</a
+-          >
+-          <a
+-            href="{% url 'halaman_analytics' %}"
+-            class="nav-link {% block analytics_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="chart-no-axes-combined" class="h-4 w-4"></i
+-            >Analytics</a
+-          >
+-          {% if user.is_superuser %}<a
+-            href="{% url 'backup_database' %}"
+-            class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"
+-            ><i data-lucide="database-backup" class="h-4 w-4"></i>Backup
+-            database</a
+-          >{% endif %}
+-        </nav>
+-        <div
+-          class="mt-auto rounded-2xl border border-[#dfe3d8] bg-[#fafbf7] p-4"
+-        >
+-          <div class="mb-3 flex items-center justify-between">
+-            <span class="h-2 w-2 rounded-full bg-[#879b75]"></span
+-            ><span class="mono text-[10px] text-[#8b9286]">LIVE SYSTEM</span>
+-          </div>
+-          <p class="text-xs font-semibold leading-5">
+-            Semua operasional<br />dalam satu ruang.
+-          </p>
++      </div>
++    </aside>
++    <main class="min-w-0 flex-1 overflow-y-auto p-5 sm:p-7 lg:p-10">
++      <header class="mb-8 flex items-center justify-between gap-4 border-b border-[#e5e5dc] pb-5">
++        <div class="flex items-center gap-3 lg:hidden">
++          <span
++            class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#20231f] text-sm font-bold text-white">e</span><span
++            class="font-extrabold">ecomora<span class="text-[#879b75]">.</span></span>
+         </div>
+-      </aside>
+-      <main class="min-w-0 flex-1 p-5 sm:p-7 lg:p-10">
+-        <header
+-          class="mb-8 flex items-center justify-between gap-4 border-b border-[#e5e5dc] pb-5"
+-        >
+-          <div class="flex items-center gap-3 lg:hidden">
+-            <span
+-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#20231f] text-sm font-bold text-white"
+-              >e</span
+-            ><span class="font-extrabold"
+-              >ecomora<span class="text-[#879b75]">.</span></span
+-            >
+-          </div>
+-          <div class="hidden lg:block">
+-            {% block eyebrow %}<span
+-              class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]"
+-              >Ecomora workspace</span
+-            >{% endblock %}
+-          </div>
+-          <div class="ml-auto flex items-center gap-3">
+-            <span class="hidden text-right sm:block"
+-              ><strong class="block text-xs">Admin Kasir</strong
+-              ><span class="text-[11px] text-[#8b9286]"
+-                >Operator utama</span
+-              ></span
+-            ><span
+-              class="flex h-9 w-9 items-center justify-center rounded-full bg-[#dce6d5] text-xs font-bold text-[#53634a]"
+-              >AK</span
+-            ><a
+-              href="{% url 'logout' %}"
+-              class="text-[11px] font-bold text-[#8b9286] hover:text-[#20231f]"
+-              >Keluar</a
+-            >
+-          </div>
+-        </header>
+-        <div class="mb-4 flex gap-2 overflow-x-auto lg:hidden">
+-          <a
+-            href="{% url 'halaman_kasir' %}"
+-            class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs"
+-            >Kasir</a
+-          ><a
+-            href="{% url 'halaman_gudang' %}"
+-            class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs"
+-            >Gudang</a
+-          ><a
+-            href="{% url 'halaman_stok' %}"
+-            class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs"
+-            >Stok</a
+-          ><a
+-            href="{% url 'halaman_analytics' %}"
+-            class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs"
+-            >Analytics</a
+-          >
++        <div class="hidden lg:block">
++          {% block eyebrow %}<span class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]">Ecomora
++            workspace</span>{% endblock %}
+         </div>
+-        {% if messages %}
+-        <div class="mb-5 space-y-2">
+-          {% for message in messages %}
+-          <div
+-            class="rounded-xl border border-[#efc9b5] bg-[#fff4ed] px-4 py-3 text-xs font-semibold text-[#9c5f3b]"
+-          >
+-            {{ message }}
+-          </div>
+-          {% endfor %}
++        <div class="ml-auto flex items-center gap-3">
++          <span class="hidden text-right sm:block"><strong class="block text-xs">{{
++              request.user.username|title|default:"Admin" }}</strong><span class="text-[11px] text-[#8b9286]">Pengguna
++              Aktif</span></span><span
++            class="flex h-9 w-9 items-center justify-center rounded-full bg-[#dce6d5] text-xs font-bold text-[#53634a] uppercase">{{
++            request.user.username|make_list|first|default:"A" }}</span><a href="{% url 'logout' %}"
++            class="text-[11px] font-bold text-[#8b9286] hover:text-[#20231f]">Keluar</a>
+         </div>
+-        {% endif %} {% block content %}{% endblock %}
+-      </main>
+-    </div>
+-    <script>
+-      lucide.createIcons();
+-    </script>
+-    {% block extra_scripts %}{% endblock %}
+-  </body>
+-</html>
++      </header>
++      <div class="mb-4 flex gap-2 overflow-x-auto lg:hidden">
++        {% if request.user|has_group:"Kasir,Supervisor" %}
++        <a href="{% url 'halaman_kasir' %}"
++          class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Kasir</a>
++        {% endif %}
++        {% if request.user|has_group:"Admin Gudang,Supervisor" %}
++        <a href="{% url 'halaman_gudang' %}"
++          class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Gudang</a><a
++          href="{% url 'halaman_stok' %}"
++          class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Stok</a>
++        {% endif %}
++        {% if request.user|has_group:"Owner" %}
++        <a href="{% url 'halaman_analytics' %}"
++          class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Analytics</a>
++        {% endif %}
++      </div>
++      {% if messages %}
++      <div class="mb-5 space-y-2">
++        {% for message in messages %}
++        <div class="rounded-xl border border-[#efc9b5] bg-[#fff4ed] px-4 py-3 text-xs font-semibold text-[#9c5f3b]">
++          {{ message }}
++        </div>
++        {% endfor %}
++      </div>
++      {% endif %} {% block content %}{% endblock %}
++    </main>
++  </div>
++  <script>
++    lucide.createIcons();
++  </script>
++  {% block extra_scripts %}{% endblock %}
++</body>
++
++</html>
+\ No newline at end of file

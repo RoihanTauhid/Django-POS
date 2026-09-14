@@ -29,12 +29,8 @@
       >Lihat hari sebelumnya <i data-lucide="arrow-up-right" class="h-4 w-4"></i
     ></a>
   </div>
-  <div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+  <div class="mb-5">
     <div class="rounded-2xl border border-[#e5e5dc] bg-white p-5">
-      <p class="text-xs text-[#747a71]">Keuntungan hari ini</p>
-      <p class="mt-3 text-2xl font-extrabold">Rp {{ keuntungan }}</p>
-    </div>
-    <div class="rounded-2xl border border-[#e5e5dc] bg-white p-5 md:col-span-2">
       <form
         action="{% url 'export_transaksi' %}"
         method="GET"
@@ -58,16 +54,80 @@
       </form>
     </div>
   </div>
-  <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-    <div class="rounded-2xl bg-[#20231f] p-6 text-white">
-      <p class="mb-8 text-xs text-[#aab0a6]">Total pendapatan kotor</p>
-      <p class="text-3xl font-extrabold">Rp {{ pendapatan_kotor }}</p>
+
+  <h2 class="mb-4 text-lg font-extrabold">Laporan Keuangan</h2>
+  <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <!-- Hari Ini -->
+    <div class="rounded-2xl border border-[#e5e5dc] bg-white p-5">
+        <p class="mb-4 text-[10px] font-bold uppercase tracking-wider text-[#9a9f96]">Hari Ini</p>
+        <div class="space-y-4">
+            <div>
+                <p class="text-xs text-[#747a71]">Pendapatan Kotor</p>
+                <p class="text-lg font-extrabold text-[#20231f]">Rp {{ keuangan.hari_ini.pendapatan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#747a71]">Keuntungan Bersih</p>
+                <p class="text-lg font-extrabold text-[#879b75]">Rp {{ keuangan.hari_ini.keuntungan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#747a71]">Transaksi</p>
+                <p class="text-sm font-bold text-[#20231f]">{{ keuangan.hari_ini.jumlah }} struk</p>
+            </div>
+        </div>
     </div>
-    <div class="rounded-2xl border border-[#e5e5dc] bg-white p-6">
-      <p class="mb-8 text-xs text-[#747a71]">Transaksi berhasil</p>
-      <p class="text-3xl font-extrabold">
-        {{ jumlah_transaksi }} <span class="text-sm text-[#9a9f96]">struk</span>
-      </p>
+    <!-- Minggu Ini -->
+    <div class="rounded-2xl border border-[#e5e5dc] bg-white p-5">
+        <p class="mb-4 text-[10px] font-bold uppercase tracking-wider text-[#9a9f96]">Minggu Ini</p>
+        <div class="space-y-4">
+            <div>
+                <p class="text-xs text-[#747a71]">Pendapatan Kotor</p>
+                <p class="text-lg font-extrabold text-[#20231f]">Rp {{ keuangan.minggu_ini.pendapatan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#747a71]">Keuntungan Bersih</p>
+                <p class="text-lg font-extrabold text-[#879b75]">Rp {{ keuangan.minggu_ini.keuntungan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#747a71]">Transaksi</p>
+                <p class="text-sm font-bold text-[#20231f]">{{ keuangan.minggu_ini.jumlah }} struk</p>
+            </div>
+        </div>
+    </div>
+    <!-- Bulan Ini -->
+    <div class="rounded-2xl border border-[#e5e5dc] bg-white p-5">
+        <p class="mb-4 text-[10px] font-bold uppercase tracking-wider text-[#9a9f96]">Bulan Ini</p>
+        <div class="space-y-4">
+            <div>
+                <p class="text-xs text-[#747a71]">Pendapatan Kotor</p>
+                <p class="text-lg font-extrabold text-[#20231f]">Rp {{ keuangan.bulan_ini.pendapatan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#747a71]">Keuntungan Bersih</p>
+                <p class="text-lg font-extrabold text-[#879b75]">Rp {{ keuangan.bulan_ini.keuntungan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#747a71]">Transaksi</p>
+                <p class="text-sm font-bold text-[#20231f]">{{ keuangan.bulan_ini.jumlah }} struk</p>
+            </div>
+        </div>
+    </div>
+    <!-- Tahun Ini -->
+    <div class="rounded-2xl bg-[#20231f] p-5 text-white">
+        <p class="mb-4 text-[10px] font-bold uppercase tracking-wider text-[#aab0a6]">Tahun Ini</p>
+        <div class="space-y-4">
+            <div>
+                <p class="text-xs text-[#aab0a6]">Total Pendapatan</p>
+                <p class="text-xl font-extrabold">Rp {{ keuangan.tahun_ini.pendapatan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#aab0a6]">Total Keuntungan</p>
+                <p class="text-xl font-extrabold text-[#a3c983]">Rp {{ keuangan.tahun_ini.keuntungan|floatformat:0 }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-[#aab0a6]">Total Transaksi</p>
+                <p class="text-sm font-bold">{{ keuangan.tahun_ini.jumlah }} struk</p>
+            </div>
+        </div>
     </div>
   </div>
   <div class="mb-8">

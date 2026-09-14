@@ -1,0 +1,44 @@
+<div class="overflow-x-auto rounded-2xl border border-[#e5e5dc] bg-white mb-8">
+  <table class="w-full min-w-[600px] text-left text-xs">
+    <thead>
+      <tr class="border-b bg-[#f5f6f1] text-[10px] uppercase tracking-wider text-[#8b9286]">
+        <th class="p-4">Kode transaksi</th>
+        <th class="p-4">Waktu</th>
+        <th class="p-4">Total harga</th>
+        <th class="p-4 text-right">Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for trx in transaksi_list %}
+      <tr class="border-b border-[#f0f0eb] last:border-0">
+        <td class="p-4 font-bold">{{ trx.kode_transaksi }}</td>
+        <td class="p-4 text-[#8b9286]">{{ trx.tanggal|date:"d M Y, H:i" }}</td>
+        <td class="p-4 font-extrabold">Rp {{ trx.total_harga }}</td>
+        <td class="p-4 text-right">
+          <button
+            type="button"
+            class="btn-soft mr-2 rounded-lg px-3 py-2 text-[11px] font-extrabold"
+            data-kode="{{ trx.kode_transaksi }}"
+            data-items='[{% for d in trx.items.all %}{"nama": "{{ d.produk.nama_produk|escapejs }}", "harga": {{ d.produk.harga_jual|stringformat:"f" }}, "qty": {{ d.jumlah }}, "subtotal": {{ d.subtotal|stringformat:"f" }}}{% if not forloop.last %},{% endif %}{% endfor %}]'
+            onclick="bukaDetail(this)"
+          >
+            Lihat detail
+          </button>
+          <a
+            href="{% url 'cetak_struk' trx.id %}"
+            target="_blank"
+            class="btn-soft rounded-lg px-3 py-2 text-[11px] font-extrabold"
+            >Lihat struk</a
+          >
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="p-14 text-center text-[#9a9f96]">
+          {{ empty_msg }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

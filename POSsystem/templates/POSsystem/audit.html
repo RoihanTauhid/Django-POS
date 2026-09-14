@@ -2,7 +2,7 @@
 <!-- title -->
 {% block title %}Audit Aktivitas | Ecomora{% endblock %}
 <!-- active nav -->
-{% block analytics_active %}active{% endblock %} {% block content %}
+{% block audit_active %}active{% endblock %} {% block content %}
 <section class="fade-up">
   <div class="mb-8">
     <p
@@ -15,6 +15,27 @@
       Jejak perubahan penting di dalam sistem.
     </p>
   </div>
+
+  <div class="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+    <form method="GET" class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+      <div class="relative">
+        <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"></i>
+        <input type="text" name="q" value="{{ query }}" placeholder="Cari aktivitas..." class="w-full rounded-xl border border-[#e5e5dc] bg-white py-2 pl-9 pr-4 text-xs focus:border-[#879b75] focus:outline-none sm:w-[250px]">
+      </div>
+      <select name="pengguna" class="rounded-xl border border-[#e5e5dc] bg-white px-4 py-2 text-xs focus:border-[#879b75] focus:outline-none">
+        <option value="">Semua Pengguna</option>
+        {% for u in users %}
+        <option value="{{ u.id }}" {% if pengguna_id == u.id|stringformat:"s" %}selected{% endif %}>{{ u.username|title }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="rounded-xl bg-[#20231f] px-4 py-2 text-xs font-bold text-white hover:bg-[#607251]">Filter</button>
+    </form>
+    
+    <a href="?export=csv{% if query %}&q={{ query }}{% endif %}{% if pengguna_id %}&pengguna={{ pengguna_id }}{% endif %}" class="flex items-center gap-2 rounded-xl bg-green-50 px-4 py-2 text-xs font-bold text-green-700 hover:bg-green-100 border border-green-200">
+      <i data-lucide="download" class="h-4 w-4"></i> Unduh CSV
+    </a>
+  </div>
+
   <div class="overflow-x-auto rounded-2xl border border-[#e5e5dc] bg-white">
     <table class="w-full min-w-[600px] text-left text-xs">
       <thead>
@@ -26,22 +47,52 @@
         </tr>
       </thead>
       <tbody>
-        {% for log in log_aktivitas %}
-        <tr class="border-b border-[#f0f0eb]">
+        {% for log in page_obj %}
+        <tr class="border-b border-[#f0f0eb] hover:bg-[#fafbf7] transition-colors">
           <td class="p-4 text-[#8b9286]">{{ log.waktu|date:"d/m/Y H:i" }}</td>
-          <td class="p-4">{{ log.pengguna|default:"Sistem" }}</td>
-          <td class="p-4 font-bold">{{ log.aksi }}</td>
-          <td class="p-4">{{ log.keterangan }}</td>
+          <td class="p-4 font-semibold">{{ log.pengguna.username|title|default:"Sistem" }}</td>
+          <td class="p-4">
+            {% if 'Hapus' in log.aksi or 'Void' in log.aksi or 'Batal' in log.aksi %}
+              <span class="rounded bg-red-100 px-2 py-1 text-[10px] font-bold uppercase text-red-600">{{ log.aksi }}</span>
+            {% elif 'Tambah' in log.aksi or 'Baru' in log.aksi or 'Simpan' in log.aksi or 'Buat' in log.aksi %}
+              <span class="rounded bg-green-100 px-2 py-1 text-[10px] font-bold uppercase text-green-700">{{ log.aksi }}</span>
+            {% elif 'Ubah' in log.aksi or 'Edit' in log.aksi or 'Update' in log.aksi or 'Ganti' in log.aksi %}
+              <span class="rounded bg-yellow-100 px-2 py-1 text-[10px] font-bold uppercase text-yellow-700">{{ log.aksi }}</span>
+            {% elif 'Login' in log.aksi or 'Logout' in log.aksi %}
+              <span class="rounded bg-blue-100 px-2 py-1 text-[10px] font-bold uppercase text-blue-700">{{ log.aksi }}</span>
+            {% else %}
+              <span class="rounded bg-gray-100 px-2 py-1 text-[10px] font-bold uppercase text-gray-600">{{ log.aksi }}</span>
+            {% endif %}
+          </td>
+          <td class="p-4 leading-relaxed">{{ log.keterangan }}</td>
         </tr>
         {% empty %}
         <tr>
           <td colspan="4" class="p-14 text-center text-[#9a9f96]">
-            Belum ada aktivitas.
+            Belum ada aktivitas yang sesuai.
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="mt-6 flex items-center justify-between text-xs">
+    <div class="text-[#747a71]">
+      Halaman <span class="font-bold text-black">{{ page_obj.number }}</span> dari {{ page_obj.paginator.num_pages }}
+    </div>
+    <div class="flex gap-2">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if pengguna_id %}&pengguna={{ pengguna_id }}{% endif %}" class="rounded-lg border border-[#e5e5dc] bg-white px-3 py-2 hover:bg-[#f1f2eb] font-semibold transition-colors">Sebelumnya</a>
+      {% endif %}
+      
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if pengguna_id %}&pengguna={{ pengguna_id }}{% endif %}" class="rounded-lg border border-[#e5e5dc] bg-white px-3 py-2 hover:bg-[#f1f2eb] font-semibold transition-colors">Selanjutnya</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
 </section>
 {% endblock %}

@@ -149,45 +149,81 @@
       </table>
     </div>
   </div>
-  <h2 class="mb-4 text-lg font-extrabold">Detail transaksi sebelumnya</h2>
-  <div class="overflow-x-auto rounded-2xl border border-[#e5e5dc] bg-white">
-    <table class="w-full min-w-[600px] text-left text-xs">
-      <thead>
-        <tr
-          class="border-b bg-[#f5f6f1] text-[10px] uppercase tracking-wider text-[#8b9286]"
+  <!-- Date Filter Form -->
+  <div class="mb-8 rounded-2xl border border-[#e5e5dc] bg-white p-5">
+    <form method="get" class="flex flex-col sm:flex-row items-end gap-4">
+      <div class="w-full sm:w-auto flex-1">
+        <label class="mb-1 block text-xs font-bold text-[#8b9286]">Dari Tanggal</label>
+        <input
+          type="date"
+          name="start_date"
+          value="{{ start_date|default_if_none:'' }}"
+          class="w-full rounded-xl border border-[#e5e5dc] bg-[#fafbf7] px-4 py-2.5 text-sm font-bold outline-none focus:border-[#879b75]"
+        />
+      </div>
+      <div class="w-full sm:w-auto flex-1">
+        <label class="mb-1 block text-xs font-bold text-[#8b9286]">Sampai Tanggal</label>
+        <input
+          type="date"
+          name="end_date"
+          value="{{ end_date|default_if_none:'' }}"
+          class="w-full rounded-xl border border-[#e5e5dc] bg-[#fafbf7] px-4 py-2.5 text-sm font-bold outline-none focus:border-[#879b75]"
+        />
+      </div>
+      <div class="w-full sm:w-auto">
+        <button
+          type="submit"
+          class="btn-primary w-full rounded-xl px-6 py-2.5 text-sm font-extrabold"
         >
-          <th class="p-4">Kode transaksi</th>
-          <th class="p-4">Waktu</th>
-          <th class="p-4">Total harga</th>
-          <th class="p-4 text-right">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for trx in transaksi_sebelumnya %}
-        <tr class="border-b border-[#f0f0eb] last:border-0">
-          <td class="p-4 font-bold">{{ trx.kode_transaksi }}</td>
-          <td class="p-4 text-[#8b9286]">
-            {{ trx.tanggal|date:"d M Y, H:i" }}
-          </td>
-          <td class="p-4 font-extrabold">Rp {{ trx.total_harga }}</td>
-          <td class="p-4 text-right">
-            <a
-              href="{% url 'cetak_struk' trx.id %}"
-              target="_blank"
-              class="btn-soft rounded-lg px-3 py-2 text-[11px] font-extrabold"
-              >Lihat struk</a
-            >
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="4" class="p-14 text-center text-[#9a9f96]">
-            Belum ada transaksi hari sebelumnya.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+          Filter
+        </button>
+      </div>
+      <div class="w-full sm:w-auto">
+        <a
+          href="{% url 'halaman_riwayat_transaksi' %}"
+          class="btn-soft block text-center w-full rounded-xl px-6 py-2.5 text-sm font-extrabold"
+        >
+          Reset
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <h2 class="mb-4 text-lg font-extrabold">Riwayat Transaksi</h2>
+
+  <div class="flex flex-col gap-4 mb-8">
+    {% for hari in riwayat_harian %}
+    <a href="{% url 'halaman_riwayat_harian' hari.tanggal|date:'Y-m-d' %}" class="group block rounded-2xl border border-[#e5e5dc] bg-white hover:border-[#879b75] hover:shadow-sm transition-all p-5">
+      <div class="flex cursor-pointer flex-col sm:flex-row items-start sm:items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#f5f6f1] text-[#879b75]">
+            <i data-lucide="calendar" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <div class="text-sm font-extrabold">{{ hari.tanggal|date:"d F Y" }}</div>
+            <div class="text-[11px] font-bold text-[#8b9286]">{{ hari.jumlah_transaksi }} Transaksi</div>
+          </div>
+        </div>
+        <div class="mt-4 sm:mt-0 flex gap-6 text-right items-center">
+          <div>
+            <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b9286]">Pendapatan</div>
+            <div class="text-sm font-black text-[#20231f]">Rp {{ hari.pendapatan|floatformat:0 }}</div>
+          </div>
+          <div>
+            <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b9286]">Keuntungan</div>
+            <div class="text-sm font-black text-[#879b75]">Rp {{ hari.keuntungan|floatformat:0 }}</div>
+          </div>
+          <div class="flex items-center text-[#8b9286] group-hover:translate-x-1 transition-transform">
+            <i data-lucide="chevron-right" class="h-5 w-5"></i>
+          </div>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div class="rounded-2xl border border-dashed border-[#e5e5dc] p-10 text-center text-sm font-semibold text-[#8b9286]">
+      Belum ada data pada rentang tanggal ini.
+    </div>
+    {% endfor %}
   </div>
 </section>
 {% endblock %} {% block extra_scripts %}
@@ -259,5 +295,6 @@
     JSON.parse("{{ laporan_tahunan_json|escapejs }}"),
     "#607251",
   );
+
 </script>
 {% endblock %}

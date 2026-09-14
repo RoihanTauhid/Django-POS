@@ -123,12 +123,22 @@
         >
           Cetak struk
         </button>
+        {% load role_tags %}
+        {% if request.user|has_group:"Owner" %}
+        <a
+          href="{% url 'halaman_riwayat_transaksi' %}"
+          class="rounded bg-[#e9eee4] py-2 text-center font-sans font-bold text-[#53634a] hover:bg-[#dce6d5]"
+        >
+          Kembali ke Riwayat
+        </a>
+        {% else %}
         <a
           href="{% url 'halaman_kasir' %}"
           class="rounded bg-[#e9eee4] py-2 text-center font-sans font-bold text-[#53634a] hover:bg-[#dce6d5]"
         >
           Kembali ke Kasir
         </a>
+        {% endif %}
       </div>
     </div>
   </body>

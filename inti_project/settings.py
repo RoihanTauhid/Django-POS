@@ -145,3 +145,6 @@ MEDIA_ROOT = BASE_DIR /'media'
 MIDTRANS_SERVER_KEY = os.environ.get('MIDTRANS_SERVER_KEY', '')
 MIDTRANS_CLIENT_KEY = os.environ.get('MIDTRANS_CLIENT_KEY', '')
 MIDTRANS_IS_PRODUCTION = os.environ.get('MIDTRANS_IS_PRODUCTION', 'False').lower() == 'true'
+
+# Force reload to pick up new static files
+

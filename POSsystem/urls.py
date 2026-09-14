@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.halaman_kasir, name='halaman_kasir'),
+    path('', views.dashboard_redirect, name='dashboard_redirect'),
+    path('kasir/', views.halaman_kasir, name='halaman_kasir'),
     path('tambah/<int:produk_id>/', views.tambah_ke_keranjang, name='tambah_ke_keranjang'),
     path('keranjang/<int:produk_id>/<str:aksi>/', views.ubah_keranjang, name='ubah_keranjang'),
     path('bersihkan/', views.bersihkan_keranjang, name='bersihkan_keranjang'),
@@ -23,10 +24,12 @@ urlpatterns = [
     path('supplier/tambah/', views.tambah_supplier, name='tambah_supplier'),
     path('analytics/', views.halaman_analytics, name='halaman_analytics'),
     path('analytics/riwayat/', views.halaman_riwayat_transaksi, name='halaman_riwayat_transaksi'),
+    path('analytics/riwayat/<str:date_str>/', views.halaman_riwayat_harian, name='halaman_riwayat_harian'),
     path('analytics/export/', views.export_transaksi, name='export_transaksi'),
     path('transaksi/<int:transaksi_id>/void/', views.void_transaksi, name='void_transaksi'),
     path('retur/<int:detail_id>/', views.retur_transaksi, name='retur_transaksi'),
     path('opname/', views.halaman_opname, name='halaman_opname'),
+    path('mutasi/', views.halaman_mutasi_stok, name='halaman_mutasi_stok'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('backup/', views.backup_database, name='backup_database'),

@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}CoreRetail POS{% endblock %}</title>
+  <title>{% block title %}Ecomora POS{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -126,23 +126,6 @@
         display: none;
       }
     }
-
-    .nav-scroll::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .nav-scroll::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .nav-scroll::-webkit-scrollbar-thumb {
-      background: #dce6d5;
-      border-radius: 4px;
-    }
-
-    .nav-scroll::-webkit-scrollbar-thumb:hover {
-      background: #879b75;
-    }
   </style>
   {% block extra_head %}{% endblock %}
 </head>
@@ -151,13 +134,14 @@
   <div class="shell mx-auto flex h-full max-w-[1500px] overflow-hidden rounded-[28px]">
     <aside class="hidden w-[230px] shrink-0 border-r border-[#e5e5dc] bg-[#f1f2eb] p-5 lg:flex lg:flex-col">
       <a href="{% url 'halaman_kasir' %}" class="mb-12 flex items-center gap-3 px-2">
-        <img src="{% static 'POSsystem/images/logo.jpg' %}" alt="CoreRetail" class="h-9 w-9 rounded-xl object-cover border border-[#e5e5dc]" />
-        <span class="text-[16px] font-extrabold tracking-tight">CoreRetail<span class="text-[#879b75]">.</span></span>
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#20231f] text-sm font-extrabold text-white">e</span>
+        <span class="text-[15px] font-extrabold tracking-tight">ecomora<span class="text-[#879b75]">.</span></span>
       </a>
       <p class="mono mb-3 px-3 text-[10px] uppercase tracking-[.18em] text-[#9a9f96]">
         Workspace
       </p>
-      <nav class="nav-scroll flex-1 overflow-y-auto space-y-1 text-[13px] pr-2 mb-4">
+      <nav class="space-y-1 text-[13px]">
         {% if request.user|has_group:"Kasir,Supervisor" %}
         <a href="{% url 'halaman_kasir' %}"
           class="nav-link {% block kasir_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
@@ -170,14 +154,11 @@
         <a href="{% url 'halaman_stok' %}"
           class="nav-link {% block stok_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
             data-lucide="boxes" class="h-4 w-4"></i>Stok Tersisa</a>
-        <a href="{% url 'halaman_pembelian' %}"
-          class="nav-link {% block pembelian_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
+        <a href="{% url 'halaman_pembelian' %}" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"><i
             data-lucide="truck" class="h-4 w-4"></i>Pembelian</a>
-        <a href="{% url 'tambah_supplier' %}"
-          class="nav-link {% block supplier_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
+        <a href="{% url 'tambah_supplier' %}" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"><i
             data-lucide="user-plus" class="h-4 w-4"></i>Supplier Baru</a>
-        <a href="{% url 'halaman_opname' %}"
-          class="nav-link {% block opname_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
+        <a href="{% url 'halaman_opname' %}" class="nav-link flex items-center gap-3 rounded-xl px-3 py-3"><i
             data-lucide="clipboard-check" class="h-4 w-4"></i>Stok Opname</a>
         {% endif %}
         {% if request.user|has_group:"Supervisor,Owner" %}
@@ -185,10 +166,7 @@
           class="nav-link {% block audit_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
             data-lucide="history" class="h-4 w-4"></i>Audit Aktivitas</a>
         {% endif %}
-        {% if request.user|has_group:"Supervisor,Owner" %}
-        <a href="{% url 'halaman_mutasi_stok' %}"
-          class="nav-link {% block mutasi_stok_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
-            data-lucide="arrow-left-right" class="h-4 w-4"></i>Mutasi Stok</a>
+        {% if request.user|has_group:"Owner" %}
         <a href="{% url 'halaman_analytics' %}"
           class="nav-link {% block analytics_active %}{% endblock %} flex items-center gap-3 rounded-xl px-3 py-3"><i
             data-lucide="chart-no-axes-combined" class="h-4 w-4"></i>Analytics</a>
@@ -199,8 +177,8 @@
           database</a>{% endif %}
       </nav>
       <div class="mt-auto rounded-2xl border border-[#dfe3d8] bg-[#fafbf7] p-4">
-        <div class="mb-1 flex items-center justify-between">
-          <span class="h-1 w-1 rounded-full bg-[#879b75]"></span><span class="mono text-[10px] text-[#8b9286]">LIVE
+        <div class="mb-3 flex items-center justify-between">
+          <span class="h-2 w-2 rounded-full bg-[#879b75]"></span><span class="mono text-[10px] text-[#8b9286]">LIVE
             SYSTEM</span>
         </div>
         <p class="text-xs font-semibold leading-5">
@@ -211,19 +189,21 @@
     <main class="min-w-0 flex-1 overflow-y-auto p-5 sm:p-7 lg:p-10">
       <header class="mb-8 flex items-center justify-between gap-4 border-b border-[#e5e5dc] pb-5">
         <div class="flex items-center gap-3 lg:hidden">
-          <img src="{% static 'POSsystem/images/logo.jpg' %}" alt="CoreRetail" class="h-8 w-8 rounded-lg object-cover border border-[#e5e5dc]" />
-          <span class="font-extrabold text-[15px]">CoreRetail<span class="text-[#879b75]">.</span></span>
+          <span
+            class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#20231f] text-sm font-bold text-white">e</span><span
+            class="font-extrabold">ecomora<span class="text-[#879b75]">.</span></span>
         </div>
         <div class="hidden lg:block">
-          {% block eyebrow %}<span class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]">CoreRetail workspace</span>{% endblock %}
+          {% block eyebrow %}<span class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]">Ecomora
+            workspace</span>{% endblock %}
         </div>
         <div class="ml-auto flex items-center gap-3">
-          <span class="hidden text-right sm:block">
-            <strong class="block text-xs">{{ request.user.username|title|default:"Admin" }}</strong>
-            <span class="text-[11px] text-[#8b9286]">Pengguna Aktif</span>
-          </span>
-          <span class="flex h-9 w-9 items-center justify-center rounded-full bg-[#dce6d5] text-xs font-bold text-[#53634a] uppercase">{{ request.user.username|make_list|first|default:"A" }}</span>
-          <a href="{% url 'logout' %}" class="text-[11px] font-bold text-[#8b9286] hover:text-[#20231f]">Keluar</a>
+          <span class="hidden text-right sm:block"><strong class="block text-xs">{{
+              request.user.username|title|default:"Admin" }}</strong><span class="text-[11px] text-[#8b9286]">Pengguna
+              Aktif</span></span><span
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-[#dce6d5] text-xs font-bold text-[#53634a] uppercase">{{
+            request.user.username|make_list|first|default:"A" }}</span><a href="{% url 'logout' %}"
+            class="text-[11px] font-bold text-[#8b9286] hover:text-[#20231f]">Keluar</a>
         </div>
       </header>
       <div class="mb-4 flex gap-2 overflow-x-auto lg:hidden">
@@ -233,13 +213,11 @@
         {% endif %}
         {% if request.user|has_group:"Admin Gudang,Supervisor" %}
         <a href="{% url 'halaman_gudang' %}"
-          class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Gudang</a>
-        <a href="{% url 'halaman_stok' %}"
+          class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Gudang</a><a
+          href="{% url 'halaman_stok' %}"
           class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Stok</a>
         {% endif %}
-        {% if request.user|has_group:"Supervisor,Owner" %}
-        <a href="{% url 'halaman_mutasi_stok' %}"
-          class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Mutasi Stok</a>
+        {% if request.user|has_group:"Owner" %}
         <a href="{% url 'halaman_analytics' %}"
           class="nav-link whitespace-nowrap rounded-full border border-[#e5e5dc] px-3 py-2 text-xs">Analytics</a>
         {% endif %}

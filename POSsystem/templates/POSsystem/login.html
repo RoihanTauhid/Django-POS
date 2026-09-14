@@ -1,9 +1,10 @@
+{% load static %}
 <!doctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Masuk | Ecomora</title>
+    <title>Masuk | CoreRetail</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,12 +20,8 @@
       class="w-full max-w-md rounded-3xl border border-[#e5e5dc] bg-[#fbfbf8] p-7 shadow-xl sm:p-10"
     >
       <div class="mb-10 flex items-center gap-3">
-        <span
-          class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#20231f] font-extrabold text-white"
-          >e</span
-        ><span class="text-lg font-extrabold"
-          >ecomora<span class="text-[#879b75]">.</span></span
-        >
+        <img src="{% static 'POSsystem/images/logo.jpg' %}" alt="CoreRetail" class="h-10 w-10 rounded-xl object-cover border border-[#e5e5dc]" />
+        <span class="text-lg font-extrabold">CoreRetail<span class="text-[#879b75]">.</span></span>
       </div>
       <p
         class="mb-2 text-xs font-bold uppercase tracking-[.16em] text-[#879b75]"

@@ -3,7 +3,7 @@ import hmac
 import uuid
 import json
 from collections import defaultdict
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
 import midtransclient
@@ -14,6 +14,8 @@ from django.db.models import Count, DecimalField, ExpressionWrapper, F, Q, Sum
 from django.http import FileResponse, HttpResponse, JsonResponse
 from django.db.models.functions import TruncDate, TruncMonth, TruncWeek, TruncYear
 from django.shortcuts import get_object_or_404, redirect, render
+import csv
+from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -40,17 +42,31 @@ MIDTRANS_ENABLED_PAYMENTS = {
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('halaman_kasir')
+        return redirect('dashboard_redirect')
     if request.method == 'POST':
         user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
         if user:
             login(request, user)
-            return redirect(request.GET.get('next', 'halaman_kasir'))
+            return redirect(request.GET.get('next', 'dashboard_redirect'))
         messages.error(request, 'Username atau password tidak valid.')
     return render(request, 'POSsystem/login.html')
 
 
 def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+@login_required
+def dashboard_redirect(request):
+    if request.user.groups.filter(name__in=['Kasir', 'Supervisor']).exists():
+        return redirect('halaman_kasir')
+    if request.user.groups.filter(name='Admin Gudang').exists():
+        return redirect('halaman_gudang')
+    if request.user.groups.filter(name='Owner').exists():
+        return redirect('halaman_analytics')
+    if request.user.is_superuser:
+        return redirect('/admin/')
     logout(request)
     return redirect('login')
 
@@ -65,7 +81,7 @@ def backup_database(request):
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def halaman_kasir(request):
     keranjang = request.session.get('keranjang', {})
     query = request.GET.get('barcode', '').strip()
@@ -116,7 +132,7 @@ def tambah_item_ke_session(keranjang, produk):
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def tambah_ke_keranjang(request, produk_id):
     keranjang = request.session.get('keranjang', {})
     produk = get_object_or_404(Produk, id=produk_id)
@@ -129,7 +145,7 @@ def tambah_ke_keranjang(request, produk_id):
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def ubah_keranjang(request, produk_id, aksi):
     keranjang = request.session.get('keranjang', {})
     produk_key = str(produk_id)
@@ -157,14 +173,14 @@ def ubah_keranjang(request, produk_id, aksi):
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def bersihkan_keranjang(request):
     request.session.pop('keranjang', None)
     return redirect('halaman_kasir')
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def checkout(request):
     if request.method != 'POST':
         return redirect('halaman_kasir')
@@ -315,7 +331,7 @@ def batalkan_transaksi_gateway(transaksi_id):
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def halaman_pembayaran(request, transaksi_id):
     """Halaman pembayaran online dengan popup Midtrans Snap."""
     transaksi = get_object_or_404(Transaksi, id=transaksi_id)
@@ -337,7 +353,7 @@ def halaman_pembayaran(request, transaksi_id):
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def status_pembayaran(request, transaksi_id):
     """Endpoint JSON untuk polling status pembayaran dari halaman bayar."""
     transaksi = get_object_or_404(Transaksi, id=transaksi_id)
@@ -345,7 +361,7 @@ def status_pembayaran(request, transaksi_id):
 
 
 @login_required
-@group_required('Kasir', 'Supervisor', 'Owner')
+@group_required('Kasir', 'Supervisor')
 def batalkan_pembayaran(request, transaksi_id):
     """Kasir membatalkan pembayaran online yang belum selesai."""
     if request.method == 'POST':
@@ -409,7 +425,7 @@ def cetak_struk(request, transaksi_id):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def halaman_gudang(request):
     if request.method == 'POST':
         kode_barcode = request.POST.get('kode_barcode', '').strip()
@@ -444,7 +460,7 @@ def halaman_gudang(request):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def halaman_stok(request):
     query = request.GET.get('q', '').strip()
     produk = Produk.objects.select_related('kategori').all()
@@ -457,7 +473,7 @@ def halaman_stok(request):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def tambah_produk_baru(request):
     if request.method == 'POST':
         kategori_id = request.POST.get('kategori_id')
@@ -471,12 +487,12 @@ def tambah_produk_baru(request):
             stok_minimum=request.POST.get('stok_minimum') or 5,
             gambar=request.FILES.get('gambar'),
         )
-        return redirect('halaman_kasir')
+        return redirect('halaman_stok')
     return render(request, 'POSsystem/tambah_produk.html', {'semua_kategori': Kategori.objects.all()})
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def edit_produk(request, produk_id):
     produk = get_object_or_404(Produk, id=produk_id)
     if request.method == 'POST':
@@ -495,7 +511,7 @@ def edit_produk(request, produk_id):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def hapus_produk(request, produk_id):
     if request.method == 'POST':
         try:
@@ -506,7 +522,7 @@ def hapus_produk(request, produk_id):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def tambah_kategori(request):
     if request.method == 'POST':
         nama = request.POST.get('nama', '').strip()
@@ -517,7 +533,7 @@ def tambah_kategori(request):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def halaman_pembelian(request):
     if request.method == 'POST':
         produk = get_object_or_404(Produk, id=request.POST.get('produk_id'))
@@ -540,7 +556,7 @@ def halaman_pembelian(request):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def tambah_supplier(request):
     if request.method == 'POST':
         nama = request.POST.get('nama', '').strip()
@@ -551,13 +567,33 @@ def tambah_supplier(request):
 
 
 @login_required
-@group_required('Owner')
+@group_required('Owner', 'Supervisor')
 def halaman_analytics(request):
     hari_ini = timezone.localdate()
-    transaksi = Transaksi.objects.filter(tanggal__date=hari_ini).order_by('-tanggal')
-    keuntungan = DetailTransaksi.objects.filter(transaksi__in=transaksi).aggregate(
-        total=Sum(ExpressionWrapper((F('produk__harga_jual') - F('harga_modal')) * F('jumlah'), output_field=DecimalField(max_digits=12, decimal_places=2)))
-    )['total'] or 0
+    awal_minggu = hari_ini - timedelta(days=hari_ini.weekday())
+    awal_bulan = hari_ini.replace(day=1)
+    awal_tahun = hari_ini.replace(month=1, day=1)
+
+    def hitung_keuangan(queryset):
+        pendapatan = queryset.aggregate(total=Sum('total_harga'))['total'] or 0
+        keuntungan = DetailTransaksi.objects.filter(transaksi__in=queryset).aggregate(
+            total=Sum(ExpressionWrapper((F('produk__harga_jual') - F('harga_modal')) * F('jumlah'), output_field=DecimalField(max_digits=12, decimal_places=2)))
+        )['total'] or 0
+        return {
+            'pendapatan': pendapatan,
+            'keuntungan': keuntungan,
+            'jumlah': queryset.count()
+        }
+
+    transaksi_semua = Transaksi.objects.all()
+    trx_hari_ini = transaksi_semua.filter(tanggal__date=hari_ini).order_by('-tanggal')
+    
+    keuangan = {
+        'hari_ini': hitung_keuangan(trx_hari_ini),
+        'minggu_ini': hitung_keuangan(transaksi_semua.filter(tanggal__date__gte=awal_minggu)),
+        'bulan_ini': hitung_keuangan(transaksi_semua.filter(tanggal__date__gte=awal_bulan)),
+        'tahun_ini': hitung_keuangan(transaksi_semua.filter(tanggal__date__gte=awal_tahun)),
+    }
     penjualan_hari_ini = list(DetailTransaksi.objects.filter(
         transaksi__tanggal__date=hari_ini
     ).values('produk__nama_produk').annotate(total=Sum('jumlah')).order_by('-total'))
@@ -581,10 +617,8 @@ def halaman_analytics(request):
     produk_terbanyak = penjualan_hari_ini[:5]
     produk_tersedikit = sorted(penjualan_hari_ini, key=lambda produk: (produk['total'], produk['produk__nama_produk']))[:5]
     return render(request, 'POSsystem/analytics.html', {
-        'semua_transaksi': transaksi,
-        'pendapatan_kotor': transaksi.aggregate(total=Sum('total_harga'))['total'] or 0,
-        'jumlah_transaksi': transaksi.count(),
-        'keuntungan': keuntungan,
+        'semua_transaksi': trx_hari_ini,
+        'keuangan': keuangan,
         'hari_ini': hari_ini,
         'produk_terbanyak': produk_terbanyak,
         'produk_tersedikit': produk_tersedikit,
@@ -614,7 +648,7 @@ def export_transaksi(request):
 
 
 @login_required
-@group_required('Supervisor', 'Owner')
+@group_required('Supervisor')
 def void_transaksi(request, transaksi_id):
     if request.method == 'POST':
         with transaction.atomic():
@@ -631,7 +665,7 @@ def void_transaksi(request, transaksi_id):
 
 
 @login_required
-@group_required('Supervisor', 'Owner')
+@group_required('Supervisor')
 def retur_transaksi(request, detail_id):
     detail = get_object_or_404(DetailTransaksi, id=detail_id)
     if request.method == 'POST':
@@ -648,7 +682,7 @@ def retur_transaksi(request, detail_id):
 
 
 @login_required
-@group_required('Admin Gudang', 'Owner')
+@group_required('Admin Gudang', 'Supervisor')
 def halaman_opname(request):
     if request.method == 'POST':
         produk = get_object_or_404(Produk, id=request.POST.get('produk_id'))
@@ -664,16 +698,95 @@ def halaman_opname(request):
 
 
 @login_required
-@group_required('Owner')
+@group_required('Owner', 'Supervisor')
 def halaman_audit(request):
-    return render(request, 'POSsystem/audit.html', {'log_aktivitas': AuditLog.objects.select_related('pengguna').all()[:100]})
+    from django.contrib.auth.models import User
+    query = request.GET.get('q', '')
+    pengguna_id = request.GET.get('pengguna', '')
+    export = request.GET.get('export', '')
+
+    logs = AuditLog.objects.select_related('pengguna').all()
+
+    if query:
+        logs = logs.filter(
+            Q(aksi__icontains=query) | 
+            Q(keterangan__icontains=query)
+        )
+    if pengguna_id:
+        logs = logs.filter(pengguna_id=pengguna_id)
+
+    if export == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="audit_aktivitas.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Waktu', 'Pengguna', 'Aksi', 'Keterangan'])
+        for log in logs:
+            pengguna_nama = log.pengguna.username if log.pengguna else 'Sistem'
+            waktu_str = log.waktu.strftime("%Y-%m-%d %H:%M:%S")
+            writer.writerow([waktu_str, pengguna_nama, log.aksi, log.keterangan])
+        return response
+
+    paginator = Paginator(logs, 25) # 25 per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    users = User.objects.filter(is_active=True).order_by('username')
+
+    return render(request, 'POSsystem/audit.html', {
+        'page_obj': page_obj,
+        'query': query,
+        'pengguna_id': pengguna_id,
+        'users': users
+    })
 
 
 @login_required
-@group_required('Owner')
+@group_required('Owner', 'Supervisor')
 def halaman_riwayat_transaksi(request):
-    hari_ini = timezone.localdate()
-    transaksi_sebelumnya = Transaksi.objects.exclude(tanggal__date=hari_ini).order_by('-tanggal')
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    if start_date_str:
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+    else:
+        start_date = timezone.localdate() - timedelta(days=6)
+
+    if end_date_str:
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+    else:
+        end_date = timezone.localdate()
+
+    transaksi_qs = Transaksi.objects.filter(
+        tanggal__date__gte=start_date,
+        tanggal__date__lte=end_date
+    ).prefetch_related('items__produk').order_by('-tanggal')
+
+    grouped_data = {}
+    for trx in transaksi_qs:
+        date_str = trx.tanggal.date().strftime('%Y-%m-%d')
+        if date_str not in grouped_data:
+            grouped_data[date_str] = {
+                'tanggal': trx.tanggal.date(),
+                'pendapatan': 0,
+                'keuntungan': 0,
+                'jumlah_transaksi': 0
+            }
+        
+        grouped_data[date_str]['pendapatan'] += trx.total_harga
+        
+        trx_keuntungan = sum(
+            item.subtotal - (item.harga_modal * item.jumlah) 
+            for item in trx.items.all()
+        )
+        grouped_data[date_str]['keuntungan'] += trx_keuntungan
+        grouped_data[date_str]['jumlah_transaksi'] += 1
+
+    # Convert to list and sort descending by date (already sorted mostly because of order_by but let's be sure)
+    riwayat_harian = sorted(grouped_data.values(), key=lambda x: x['tanggal'], reverse=True)
+
+    # For charts (we can just show them for the same filtered query or globally, let's keep it global excluding today for backwards compatibility, or maybe just exclude nothing since the user might want charts for all time)
+    # The previous code excluded today. We'll leave it as is to not break the chart if they liked it.
+    transaksi_sebelumnya = Transaksi.objects.exclude(tanggal__date=timezone.localdate()).order_by('-tanggal')
 
     def ringkas_periode(truncate):
         hasil = transaksi_sebelumnya.annotate(periode=truncate('tanggal')).values('periode').annotate(
@@ -691,12 +804,114 @@ def halaman_riwayat_transaksi(request):
     laporan_bulanan = ringkas_periode(TruncMonth)
     laporan_mingguan = ringkas_periode(TruncWeek)
     laporan_tahunan = ringkas_periode(TruncYear)
+    
     return render(request, 'POSsystem/riwayat_transaksi.html', {
-        'transaksi_sebelumnya': transaksi_sebelumnya,
+        'riwayat_harian': riwayat_harian,
+        'start_date': start_date.strftime('%Y-%m-%d'),
+        'end_date': end_date.strftime('%Y-%m-%d'),
         'laporan_bulanan': laporan_bulanan,
         'laporan_mingguan': laporan_mingguan,
         'laporan_tahunan': laporan_tahunan,
         'laporan_bulanan_json': json.dumps(laporan_bulanan),
         'laporan_mingguan_json': json.dumps(laporan_mingguan),
         'laporan_tahunan_json': json.dumps(laporan_tahunan),
+    })
+
+@login_required
+@group_required('Owner', 'Supervisor')
+def halaman_riwayat_harian(request, date_str):
+    try:
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        messages.error(request, 'Format tanggal tidak valid.')
+        return redirect('halaman_riwayat_transaksi')
+    
+    transaksi_list = Transaksi.objects.filter(
+        tanggal__date=target_date
+    ).prefetch_related('items__produk').order_by('-tanggal')
+
+    return render(request, 'POSsystem/riwayat_harian.html', {
+        'target_date': target_date,
+        'transaksi_list': transaksi_list,
+    })
+
+@login_required
+@group_required('Owner', 'Supervisor')
+def halaman_mutasi_stok(request):
+    tanggal_str = request.GET.get('tanggal')
+    if tanggal_str:
+        try:
+            tanggal = datetime.strptime(tanggal_str, '%Y-%m-%d').date()
+        except ValueError:
+            tanggal = timezone.localdate()
+    else:
+        tanggal = timezone.localdate()
+
+    mutasi = []
+    
+    # 1. Penjualan (DetailTransaksi)
+    penjualan = DetailTransaksi.objects.filter(
+        transaksi__tanggal__date=tanggal,
+        transaksi__status='SELESAI'
+    ).select_related('produk', 'transaksi')
+    for p in penjualan:
+        mutasi.append({
+            'waktu': p.transaksi.tanggal,
+            'produk': p.produk,
+            'aktivitas': f'Penjualan (Kasir) - Trx #{p.transaksi.kode_transaksi}',
+            'tipe': 'OUT',
+            'jumlah': p.jumlah
+        })
+
+    # 2. Pembelian
+    pembelian = Pembelian.objects.filter(tanggal__date=tanggal).select_related('produk')
+    for p in pembelian:
+        mutasi.append({
+            'waktu': p.tanggal,
+            'produk': p.produk,
+            'aktivitas': 'Pembelian (Supplier)',
+            'tipe': 'IN',
+            'jumlah': p.jumlah
+        })
+
+    # 3. Retur Transaksi
+    retur = ReturTransaksi.objects.filter(tanggal__date=tanggal).select_related('detail__produk')
+    for r in retur:
+        mutasi.append({
+            'waktu': r.tanggal,
+            'produk': r.detail.produk,
+            'aktivitas': 'Retur Penjualan',
+            'tipe': 'IN',
+            'jumlah': r.jumlah
+        })
+
+    # 4. Stok Opname
+    opname = StokOpname.objects.filter(tanggal__date=tanggal).select_related('produk')
+    for o in opname:
+        if o.selisih != 0:
+            mutasi.append({
+                'waktu': o.tanggal,
+                'produk': o.produk,
+                'aktivitas': f'Stok Opname ({o.keterangan})',
+                'tipe': 'IN' if o.selisih > 0 else 'OUT',
+                'jumlah': abs(o.selisih)
+            })
+
+    # 5. Riwayat Stok (Penyesuaian manual)
+    riwayat = RiwayatStok.objects.filter(tanggal__date=tanggal).select_related('produk')
+    for r in riwayat:
+        mutasi.append({
+            'waktu': r.tanggal,
+            'produk': r.produk,
+            'aktivitas': f'Penyesuaian Manual ({r.keterangan})',
+            'tipe': 'IN' if r.tipe == 'MASUK' else 'OUT',
+            'jumlah': r.jumlah
+        })
+
+    # Sort mutasi by waktu descending
+    mutasi.sort(key=lambda x: x['waktu'], reverse=True)
+
+    return render(request, 'POSsystem/mutasi_stok.html', {
+        'mutasi': mutasi,
+        'tanggal_formatted': tanggal.strftime('%Y-%m-%d'),
     })
