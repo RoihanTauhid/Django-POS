@@ -4,7 +4,7 @@
   class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]"
   >Catalog / New product</span
 >{% endblock %} {% block extra_head %}
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js" type="text/javascript"></script>
 {% endblock %} {% block content %}
 <section class="fade-up mx-auto max-w-3xl">
   <div class="mb-8">
@@ -156,72 +156,72 @@
 </div>
 {% endblock %} {% block extra_scripts %}
 <script>
-  let productScanner;
-  let nativeBarcodeDetector;
-  let nativeScanTimer;
+  let quaggaInitialized = false;
   const productModal = document.getElementById("product-scanner-modal");
   const productStatus = document.getElementById("product-scanner-status");
   const productBarcode = document.querySelector('input[name="kode_barcode"]');
+  
+  // Style for Quagga elements
+  if (!document.getElementById("quagga-style")) {
+    const style = document.createElement("style");
+    style.id = "quagga-style";
+    style.innerHTML = "#product-reader video { width: 100%; height: auto; border-radius: 0.75rem; } #product-reader canvas { display: none; }";
+    document.head.appendChild(style);
+  }
+
   const openProductScanner = () => {
-    if (typeof Html5Qrcode === "undefined") {
-      productStatus.textContent =
-        "Scanner gagal dimuat. Periksa koneksi internet.";
+    if (typeof Quagga === "undefined") {
+      productStatus.textContent = "Scanner gagal dimuat. Periksa koneksi internet.";
       productModal.classList.remove("hidden");
       productModal.classList.add("flex");
       return;
     }
+    
     productModal.classList.remove("hidden");
     productModal.classList.add("flex");
     productStatus.textContent = "Arahkan barcode ke dalam kotak kamera.";
-    productScanner = new Html5Qrcode("product-reader", { verbose: false });
-    Html5Qrcode.getCameras()
-      .then((cameras) => {
-        if (!cameras.length) throw new Error("Kamera tidak ditemukan");
-        const backCamera = cameras.find((camera) => /back|rear|environment|belakang/i.test(camera.label)) || cameras[cameras.length - 1];
-        return productScanner.start(
-          backCamera.id,
-        {
-          fps: 10,
-          qrbox: { width: 280, height: 140 },
-          aspectRatio: 1.777778,
-          formatsToSupport: Object.values(Html5QrcodeSupportedFormats),
-          experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-        },
-        (decodedText) => {
-          productBarcode.value = decodedText.trim();
-          productBarcode.dispatchEvent(new Event("input", { bubbles: true }));
-          productStatus.textContent = "Barcode terbaca: " + decodedText;
-          closeProductScanner();
-        },
-      )
-      .then(() => {
-        if ("BarcodeDetector" in window) {
-          try { nativeBarcodeDetector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "itf"] }); } catch (error) { nativeBarcodeDetector = null; }
-          const video = document.querySelector("#product-reader video");
-          const readNativeBarcode = async () => { if (!nativeBarcodeDetector || !video || video.readyState < 2) return; try { const codes = await nativeBarcodeDetector.detect(video); if (codes.length && codes[0].rawValue) { productBarcode.value = codes[0].rawValue.trim(); productBarcode.dispatchEvent(new Event("input", { bubbles: true })); productStatus.textContent = "Barcode terbaca: " + productBarcode.value; await closeProductScanner(); } } catch (error) { console.warn("BarcodeDetector gagal membaca.", error); } };
-          nativeScanTimer = window.setInterval(readNativeBarcode, 250);
+    
+    Quagga.init({
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: document.querySelector('#product-reader'),
+        constraints: {
+          facingMode: "environment"
         }
-      })
-      .catch(() => {
-        productStatus.textContent =
-          "Kamera tidak dapat dibuka. Izinkan akses kamera dan coba lagi.";
-      });
+      },
+      decoder: {
+        readers: ["ean_reader", "ean_8_reader", "code_128_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
+      }
+    }, function (err) {
+      if (err) {
+        productStatus.textContent = "Kamera tidak dapat dibuka. Izinkan akses kamera dan coba lagi.";
+        productStatus.classList.add("text-red-500");
+        return;
+      }
+      quaggaInitialized = true;
+      Quagga.start();
+    });
+
+    Quagga.onDetected(function (result) {
+      if (result.codeResult && result.codeResult.code) {
+        productBarcode.value = result.codeResult.code.trim();
+        productBarcode.dispatchEvent(new Event("input", { bubbles: true }));
+        productStatus.textContent = "Barcode terbaca: " + result.codeResult.code;
+        closeProductScanner();
+      }
+    });
   };
-  const closeProductScanner = async () => {
-    const scanner = productScanner;
-    productScanner = null;
-    if (nativeScanTimer) window.clearInterval(nativeScanTimer);
-    nativeScanTimer = null;
-    nativeBarcodeDetector = null;
-    try {
-      if (scanner) await scanner.stop();
-    } catch (error) {
-      console.warn("Scanner kamera dihentikan.", error);
-    } finally {
-      productModal.classList.add("hidden");
-      productModal.classList.remove("flex");
-      document.getElementById("product-reader").replaceChildren();
+
+  const closeProductScanner = () => {
+    if (quaggaInitialized) {
+      Quagga.stop();
+      Quagga.offDetected();
+      quaggaInitialized = false;
     }
+    productModal.classList.add("hidden");
+    productModal.classList.remove("flex");
+    document.getElementById("product-reader").innerHTML = "";
   };
   document
     .getElementById("open-product-scanner")

@@ -8,7 +8,7 @@
   class="mono text-[10px] uppercase tracking-[.2em] text-[#9a9f96]"
   >Point of sale / 01</span
 >{% endblock %} {% block content %} {% block extra_head %}
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js" type="text/javascript"></script>
 {% endblock %}
 <section class="fade-up">
   <div
@@ -296,34 +296,62 @@
     const change = Math.max(0, Number(paymentInput.value || 0) - total);
     changeOutput.textContent = "Rp " + change.toLocaleString("id-ID");
   });
-  let cashierScanner;
+  let quaggaInitialized = false;
   const cashierModal = document.getElementById("cashier-scanner-modal");
   const cashierSearchForm = document.querySelector('form[method="GET"]');
+  
+  // Style for Quagga elements
+  if (!document.getElementById("quagga-style")) {
+    const style = document.createElement("style");
+    style.id = "quagga-style";
+    style.innerHTML = "#cashier-reader video { width: 100%; height: auto; border-radius: 0.75rem; } #cashier-reader canvas { display: none; }";
+    document.head.appendChild(style);
+  }
+
   const openCashierScanner = () => {
     cashierModal.classList.remove("hidden");
     cashierModal.classList.add("flex");
-    cashierScanner = new Html5Qrcode("cashier-reader");
-    cashierScanner.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 250, height: 120 } },
-      (decodedText) => {
-        document.querySelector('input[name="barcode"]').value = decodedText;
-        cashierScanner.stop().finally(() => cashierSearchForm.submit());
+    
+    Quagga.init({
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: document.querySelector('#cashier-reader'),
+        constraints: {
+          facingMode: "environment"
+        }
       },
-    );
+      decoder: {
+        readers: ["ean_reader", "ean_8_reader", "code_128_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
+      }
+    }, function (err) {
+      if (err) {
+        document.getElementById("cashier-scanner-status").textContent = "Gagal memuat kamera: Pastikan Anda memberikan izin akses kamera atau tidak mengakses melalui IP HTTP biasa (gunakan localhost).";
+        document.getElementById("cashier-scanner-status").classList.add("text-red-500");
+        return;
+      }
+      quaggaInitialized = true;
+      Quagga.start();
+    });
+
+    Quagga.onDetected(function (result) {
+      if (result.codeResult && result.codeResult.code) {
+        document.querySelector('input[name="barcode"]').value = result.codeResult.code;
+        closeCashierScanner();
+        cashierSearchForm.submit();
+      }
+    });
   };
-  const closeCashierScanner = async () => {
-    const scanner = cashierScanner;
-    cashierScanner = null;
-    try {
-      if (scanner) await scanner.stop();
-    } catch (error) {
-      console.warn("Scanner kamera dihentikan.", error);
-    } finally {
-      cashierModal.classList.add("hidden");
-      cashierModal.classList.remove("flex");
-      document.getElementById("cashier-reader").replaceChildren();
+
+  const closeCashierScanner = () => {
+    if (quaggaInitialized) {
+      Quagga.stop();
+      Quagga.offDetected();
+      quaggaInitialized = false;
     }
+    cashierModal.classList.add("hidden");
+    cashierModal.classList.remove("flex");
+    document.getElementById("cashier-reader").innerHTML = "";
   };
   document
     .getElementById("open-cashier-scanner")
